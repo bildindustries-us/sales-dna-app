@@ -1,0 +1,17 @@
+[build]
+  command = "echo 'No build needed'"
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/assessment"
+  to = "/assessment.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"

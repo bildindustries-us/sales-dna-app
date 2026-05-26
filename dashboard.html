@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales DNA Dashboard — Manager View</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f1e38; --navy-mid: #1a2f52; --navy-light: #243d6b;
+  --gold: #c9973a; --gold-light: #e8b857; --gold-pale: #f5e8cc;
+  --cream: #faf7f2; --white: #fff; --slate: #6b7a94; --text: #1a1a2e;
+  --border: rgba(201,151,58,0.2);
+  --green: #2e7d32; --red: #c0392b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+/* LOGIN */
+#loginScreen {
+  min-height: 100vh; background: var(--navy);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+#loginScreen::before {
+  content: ''; position: fixed; inset: 0;
+  background: radial-gradient(ellipse 50% 60% at 80% 30%, rgba(201,151,58,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.login-box {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(201,151,58,0.2);
+  padding: 48px 40px; width: 100%; max-width: 400px; position: relative;
+}
+.login-box .eyebrow {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
+}
+.login-box h1 {
+  font-family: 'Playfair Display', serif; font-size: 28px; color: #fff;
+  margin-bottom: 6px;
+}
+.login-box .sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 32px; }
+.login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.login-field label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+.login-field input {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(201,151,58,0.25);
+  color: #fff; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.login-field input:focus { border-color: var(--gold); }
+.btn-login {
+  width: 100%; background: var(--gold); border: none; color: var(--navy);
+  padding: 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-login:hover { background: var(--gold-light); }
+.login-error { font-size: 13px; color: #e74c3c; margin-top: 12px; display: none; }
+
+/* DASHBOARD */
+#dashboard { display: none; }
+
+.dash-header {
+  background: var(--navy); padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; border-bottom: 1px solid rgba(201,151,58,0.15);
+  position: sticky; top: 0; z-index: 100;
+}
+.dash-logo { font-family: 'Playfair Display', serif; font-size: 17px; color: #fff; font-weight: 700; }
+.dash-logo span { color: var(--gold); }
+.dash-nav { display: flex; gap: 4px; }
+.nav-btn {
+  background: transparent; border: none; color: rgba(255,255,255,0.5);
+  padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  cursor: pointer; transition: color 0.2s; border-radius: 4px;
+}
+.nav-btn:hover, .nav-btn.active { color: #fff; background: rgba(255,255,255,0.07); }
+.nav-btn.active { color: var(--gold); }
+.dash-actions { display: flex; gap: 10px; align-items: center; }
+.btn-sm {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  padding: 7px 14px; border: none; cursor: pointer; transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-primary { background: var(--gold); color: var(--navy); }
+.btn-primary:hover { background: var(--gold-light); }
+.btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
+.btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+.dash-body { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+
+/* STAT CARDS */
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 40px; }
+.stat-card {
+  background: var(--white); border: 1px solid rgba(15,30,56,0.08);
+  padding: 24px; box-shadow: 0 2px 8px rgba(15,30,56,0.04);
+}
+.stat-card .stat-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--slate); margin-bottom: 10px; }
+.stat-card .stat-val { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--navy); line-height: 1; }
+.stat-card .stat-sub { font-size: 12px; color: var(--slate); margin-top: 4px; }
+
+/* FILTERS */
+.filter-bar {
+  background: var(--white); border: 1px solid rgba(15,30,56,0.08);
+  padding: 16px 20px; display: flex; gap: 12px; flex-wrap: wrap;
+  align-items: center; margin-bottom: 24px;
+}
+.filter-bar label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--slate); }
+.filter-select {
+  background: var(--cream); border: 1px solid rgba(15,30,56,0.12);
+  color: var(--text); padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+}
+.filter-input {
+  background: var(--cream); border: 1px solid rgba(15,30,56,0.12);
+  color: var(--text); padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+  flex: 1; min-width: 200px;
+}
+
+/* RESULTS TABLE */
+.results-table-wrap { background: var(--white); border: 1px solid rgba(15,30,56,0.08); overflow: hidden; margin-bottom: 40px; }
+.table-header {
+  padding: 16px 24px; border-bottom: 1px solid rgba(15,30,56,0.06);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.table-header h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); }
+.table-header .count { font-size: 12px; color: var(--slate); font-family: 'DM Mono', monospace; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; padding: 12px 16px;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--slate);
+  background: rgba(15,30,56,0.02); border-bottom: 1px solid rgba(15,30,56,0.06);
+  cursor: pointer; user-select: none;
+}
+th:hover { color: var(--navy); }
+td { padding: 14px 16px; border-bottom: 1px solid rgba(15,30,56,0.05); font-size: 13px; vertical-align: middle; }
+tr:hover td { background: rgba(201,151,58,0.04); cursor: pointer; }
+tr:last-child td { border-bottom: none; }
+.archetype-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-weight: 600; font-size: 12px; color: var(--navy-mid);
+}
+.company-tag {
+  font-size: 10px; padding: 3px 8px; letter-spacing: 0.5px;
+  font-weight: 600; text-transform: uppercase;
+}
+.tag-premier { background: rgba(15,30,56,0.08); color: var(--navy); }
+.tag-pinnacle { background: rgba(201,151,58,0.15); color: #8a6400; }
+.mini-bar-wrap { display: flex; gap: 4px; align-items: center; }
+.mini-bar { width: 60px; height: 5px; background: rgba(15,30,56,0.08); position: relative; overflow: hidden; }
+.mini-bar-fill { height: 100%; background: var(--navy); }
+.mini-bar-fill.gold { background: var(--gold); }
+
+/* DETAIL MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(10,20,40,0.7);
+  display: flex; align-items: flex-start; justify-content: center;
+  z-index: 500; padding: 40px 16px; overflow-y: auto;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white); width: 100%; max-width: 700px;
+  position: relative; box-shadow: 0 20px 60px rgba(10,20,40,0.3);
+  animation: modalIn 0.25s ease both;
+}
+@keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px;
+  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.modal-hero { background: var(--navy); padding: 32px; }
+.modal-hero .eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.modal-hero .name { font-family: 'Playfair Display', serif; font-size: 26px; color: #fff; margin-bottom: 2px; }
+.modal-hero .archetype { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); font-style: italic; }
+.modal-hero .meta { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 8px; }
+.modal-body { padding: 28px 32px; }
+.modal-section { margin-bottom: 28px; }
+.modal-section h4 {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;
+}
+.modal-trait-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.modal-trait-name { font-size: 12px; font-weight: 600; color: var(--navy); width: 130px; flex-shrink: 0; }
+.modal-bar-wrap { flex: 1; height: 8px; background: rgba(15,30,56,0.08); overflow: hidden; }
+.modal-bar-fill { height: 100%; background: var(--navy); }
+.modal-bar-fill.gold { background: var(--gold); }
+.modal-score { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--slate); width: 32px; text-align: right; }
+.coaching-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--text); line-height: 1.6; }
+.coaching-item::before { content: '▸'; color: var(--gold); flex-shrink: 0; }
+.role-fit-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.role-fit-name { font-size: 12px; font-weight: 600; color: var(--navy); flex: 1; }
+.role-fit-bar-wrap { width: 100px; height: 6px; background: rgba(15,30,56,0.08); overflow: hidden; }
+.role-fit-fill { height: 100%; }
+.fit-high { background: var(--green); } .fit-mid { background: var(--gold); } .fit-low { background: var(--red); }
+.role-fit-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--slate); width: 32px; text-align: right; }
+.tag-high { font-size: 10px; padding: 2px 6px; background: rgba(46,125,50,0.1); color: var(--green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.tag-mid { font-size: 10px; padding: 2px 6px; background: rgba(201,151,58,0.15); color: #8a6400; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.tag-low { font-size: 10px; padding: 2px 6px; background: rgba(192,57,43,0.1); color: var(--red); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* CHARTS VIEW */
+#chartsView { display: none; }
+.chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-bottom: 40px; }
+.chart-card { background: var(--white); border: 1px solid rgba(15,30,56,0.08); padding: 24px; }
+.chart-card h4 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--navy); margin-bottom: 20px; }
+.bar-chart { display: flex; flex-direction: column; gap: 12px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label { font-size: 12px; color: var(--navy); width: 110px; flex-shrink: 0; font-weight: 500; }
+.bar-outer { flex: 1; height: 24px; background: rgba(15,30,56,0.05); position: relative; }
+.bar-inner { height: 100%; background: linear-gradient(90deg, var(--navy), var(--navy-light)); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; transition: width 0.8s ease; }
+.bar-inner .bar-val { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.8); }
+.bar-inner.gold-bar { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.bar-inner .bar-val.dark { color: var(--navy); }
+
+/* EMPTY/LOADING */
+.empty-state { text-align: center; padding: 80px 24px; color: var(--slate); }
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty-state h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+.loading-pulse { animation: pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+@media (max-width: 768px) {
+  .dash-header { padding: 0 16px; }
+  .dash-nav { display: none; }
+  .dash-body { padding: 24px 16px; }
+  th:nth-child(n+4), td:nth-child(n+4) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="eyebrow">Manager Access</div>
+    <h1>Sales DNA<br>Dashboard</h1>
+    <p class="sub">Premier & Pinnacle Pools — Internal Use Only</p>
+    <div class="login-field">
+      <label>Dashboard Password</label>
+      <input type="password" id="dashPass" placeholder="Enter manager password" onkeydown="if(event.key==='Enter')login()" />
+    </div>
+    <button class="btn-login" onclick="login()">Access Dashboard</button>
+    <p class="login-error" id="loginError">Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="dash-header">
+    <div class="dash-logo">Sales <span>DNA</span> Dashboard</div>
+    <div class="dash-nav">
+      <button class="nav-btn active" onclick="showView('table')">All Results</button>
+      <button class="nav-btn" onclick="showView('charts')">Analytics</button>
+    </div>
+    <div class="dash-actions">
+      <button class="btn-sm btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-sm btn-outline" onclick="loadResults()">↻ Refresh</button>
+      <button class="btn-sm btn-outline" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- Stats -->
+    <div class="stat-row" id="statRow">
+      <div class="stat-card"><div class="stat-label">Total Assessments</div><div class="stat-val loading-pulse" id="statTotal">—</div></div>
+      <div class="stat-card"><div class="stat-label">Temecula</div><div class="stat-val loading-pulse" id="statTemecula">—</div></div>
+      <div class="stat-card"><div class="stat-label">Dallas</div><div class="stat-val loading-pulse" id="statDallas">—</div></div>
+      <div class="stat-card"><div class="stat-label">Top Archetype</div><div class="stat-val" style="font-size:20px" id="statTopArchetype">—</div><div class="stat-sub" id="statTopSub"></div></div>
+      <div class="stat-card"><div class="stat-label">Avg Drive Score</div><div class="stat-val loading-pulse" id="statAvgDrive">—</div><div class="stat-sub">out of 100</div></div>
+    </div>
+
+    <!-- TABLE VIEW -->
+    <div id="tableView">
+      <div class="filter-bar">
+        <label>Filter:</label>
+        <select class="filter-select" id="filterCompany" onchange="applyFilters()">
+          <option value="">All Companies</option>
+          <option value="Premier">Premier — Temecula</option>
+          <option value="Pinnacle">Pinnacle — Dallas</option>
+        </select>
+        <select class="filter-select" id="filterArchetype" onchange="applyFilters()">
+          <option value="">All Archetypes</option>
+          <option value="Hunter">Hunter</option>
+          <option value="Connector">Connector</option>
+          <option value="Architect">Architect</option>
+          <option value="Closer">Closer</option>
+          <option value="Advisor">Advisor</option>
+        </select>
+        <select class="filter-select" id="filterRole" onchange="applyFilters()">
+          <option value="">All Roles</option>
+          <option value="Sales Rep">Sales Rep</option>
+          <option value="New Sales Rep">New Sales Rep</option>
+          <option value="Senior Sales Rep">Senior Sales Rep</option>
+          <option value="Candidate">Candidate</option>
+          <option value="Sales Manager">Sales Manager</option>
+        </select>
+        <input type="text" class="filter-input" id="filterSearch" placeholder="Search by name or email..." oninput="applyFilters()" />
+      </div>
+
+      <div class="results-table-wrap">
+        <div class="table-header">
+          <h3>Assessment Results</h3>
+          <span class="count" id="resultCount">Loading...</span>
+        </div>
+        <div id="tableBody">
+          <div class="empty-state"><div class="icon loading-pulse">⏳</div><h3>Loading results...</h3></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS VIEW -->
+    <div id="chartsView">
+      <div class="chart-grid" id="chartGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+// ── ARCHETYPE COACHING DATA ──
+const COACHING = {
+  hunter:    ['Set weekly activity metrics — calls made, appointments set, proposals sent. They respond to scoreboards.',
+              'Give competitive context: leaderboard rankings, revenue vs. target.',
+              'Check deal quality, not just count. High-drive reps sometimes discount or over-promise to close fast.',
+              'Avoid micromanaging process — give freedom within a framework.',
+              'Channel competitiveness: "You\'re $30K from topping the board this month."'],
+  connector: ['Pair with complex customers needing trust-based approach — luxury builds, referrals.',
+              'Role-play the "ask for the business" moment monthly.',
+              'Celebrate referrals as loudly as closed sales.',
+              'Don\'t assign cold prospecting-heavy roles — they thrive on warm leads.',
+              'Coach to set clear "decision timelines" early so the close isn\'t a surprise.'],
+  architect: ['Provide tools: detailed proposal templates, accurate cost sheets, clear project timelines.',
+              'Coach to lead with customer\'s emotional vision before specs or pricing.',
+              'Great fit for design-build, renovation, or large custom jobs.',
+              'Give structured follow-up templates — they\'ll use them consistently.',
+              'Watch for analysis paralysis — encourage a "good enough to present" standard.'],
+  closer:    ['Performs best with high-activity routes and large pipeline volume.',
+              'Monitor customer satisfaction — high-pressure closes can create post-sale regret.',
+              'Coach to identify which customers need slower touch.',
+              'Use strategically: bring into stuck deals or hesitant prospects.',
+              'Tie bonuses to completed jobs + zero cancellations, not just signed contracts.'],
+  advisor:   ['Position as expert, not a salesperson — give credentials and case studies.',
+              'Hold accountable to prospecting metrics — tendency is to deepen existing over filling funnel.',
+              'Best retention asset — pair with past customers for upgrades and referrals.',
+              'Ask them to document their process — likely repeatable for other reps.',
+              'Avoid high-pressure environments — tie comp to referral rate, satisfaction, avg job size.'],
+};
+
+const TRAIT_DEFS = [
+  {key:'drive',label:'Drive & Ambition',gold:false},
+  {key:'influence',label:'Influence & Rapport',gold:false},
+  {key:'process',label:'Process & Discipline',gold:false},
+  {key:'resilience',label:'Resilience',gold:false},
+  {key:'urgency',label:'Urgency & Closing',gold:true},
+  {key:'empathy',label:'Empathy & Warmth',gold:true},
+  {key:'structure',label:'Structural Thinking',gold:true},
+];
+
+// ── STATE ──
+let allResults = [];
+let filteredResults = [];
+let sortKey = 'timestamp';
+let sortDir = -1;
+let token = '';
+
+// ── AUTH ──
+function login() {
+  const pw = document.getElementById('dashPass').value;
+  token = pw;
+  fetch('/.netlify/functions/get-results', { headers: { 'x-dashboard-token': pw } })
+    .then(r => {
+      if (r.status === 401) { document.getElementById('loginError').style.display = 'block'; return null; }
+      return r.json();
+    })
+    .then(data => {
+      if (!data) return;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      allResults = data;
+      renderAll();
+    })
+    .catch(() => {
+      // Dev mode: load mock data if no backend
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      allResults = getMockData();
+      renderAll();
+    });
+}
+
+function logout() {
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashPass').value = '';
+  token = '';
+}
+
+function loadResults() {
+  fetch('/.netlify/functions/get-results', { headers: { 'x-dashboard-token': token } })
+    .then(r => r.json()).then(data => { allResults = data; renderAll(); })
+    .catch(() => {});
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  applyFilters();
+  renderStats();
+  renderCharts();
+}
+
+function renderStats() {
+  const r = allResults;
+  document.getElementById('statTotal').textContent = r.length;
+  document.getElementById('statTemecula').textContent = r.filter(x => x.company?.includes('Premier')).length;
+  document.getElementById('statDallas').textContent = r.filter(x => x.company?.includes('Pinnacle')).length;
+
+  // Top archetype
+  const archetypeCounts = {};
+  r.forEach(x => { const a = x.archetype?.name || 'Unknown'; archetypeCounts[a] = (archetypeCounts[a]||0)+1; });
+  const top = Object.entries(archetypeCounts).sort((a,b)=>b[1]-a[1])[0];
+  if (top) {
+    const icon = r.find(x=>x.archetype?.name===top[0])?.archetype?.icon || '';
+    document.getElementById('statTopArchetype').textContent = icon + ' ' + top[0];
+    document.getElementById('statTopSub').textContent = `${top[1]} of ${r.length} reps`;
+  }
+
+  // Avg drive
+  if (r.length) {
+    const avg = Math.round(r.reduce((s,x) => s + (x.traits?.drive || 0), 0) / r.length);
+    document.getElementById('statAvgDrive').textContent = avg;
+  }
+}
+
+function applyFilters() {
+  const company = document.getElementById('filterCompany')?.value || '';
+  const archetype = document.getElementById('filterArchetype')?.value || '';
+  const role = document.getElementById('filterRole')?.value || '';
+  const search = (document.getElementById('filterSearch')?.value || '').toLowerCase();
+
+  filteredResults = allResults.filter(r => {
+    if (company && !r.company?.includes(company)) return false;
+    if (archetype && r.archetype?.name !== archetype) return false;
+    if (role && r.role !== role) return false;
+    if (search && !(r.name?.toLowerCase().includes(search) || r.email?.toLowerCase().includes(search))) return false;
+    return true;
+  });
+
+  sortResults();
+  renderTable();
+}
+
+function sortResults() {
+  filteredResults.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (sortKey === 'drive' || sortKey === 'influence') { av = a.traits?.[sortKey]||0; bv = b.traits?.[sortKey]||0; }
+    if (typeof av === 'string') return av.localeCompare(bv) * sortDir;
+    return (av - bv) * sortDir;
+  });
+}
+
+function setSort(key) {
+  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = -1; }
+  sortResults(); renderTable();
+}
+
+function renderTable() {
+  const count = filteredResults.length;
+  document.getElementById('resultCount').textContent = `${count} result${count!==1?'s':''}`;
+
+  if (count === 0) {
+    document.getElementById('tableBody').innerHTML = `<div class="empty-state"><div class="icon">🔍</div><h3>No results match your filters</h3></div>`;
+    return;
+  }
+
+  const rows = filteredResults.map(r => {
+    const date = r.timestamp ? new Date(r.timestamp).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '—';
+    const compTag = r.company?.includes('Premier') ? 'tag-premier' : 'tag-pinnacle';
+    const compLabel = r.company?.includes('Premier') ? 'Premier' : 'Pinnacle';
+    const drive = r.traits?.drive || 0;
+    const influence = r.traits?.influence || 0;
+    const driveColor = drive >= 70 ? '' : drive >= 50 ? 'gold' : 'gold';
+    return `<tr onclick="openDetail('${r.id}')">
+      <td><strong>${r.name || '—'}</strong><br><span style="font-size:11px;color:var(--slate)">${r.email||''}</span></td>
+      <td><span class="archetype-badge">${r.archetype?.icon||''} ${r.archetype?.name||'—'}</span></td>
+      <td><span class="company-tag ${compTag}">${compLabel}</span></td>
+      <td style="color:var(--slate);font-size:12px">${r.role||'—'}</td>
+      <td>
+        <div class="mini-bar-wrap">
+          <div class="mini-bar"><div class="mini-bar-fill ${driveColor}" style="width:${drive}%"></div></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">${drive}</span>
+        </div>
+      </td>
+      <td>
+        <div class="mini-bar-wrap">
+          <div class="mini-bar"><div class="mini-bar-fill gold" style="width:${influence}%"></div></div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--slate)">${influence}</span>
+        </div>
+      </td>
+      <td style="color:var(--slate);font-size:12px;font-family:'DM Mono',monospace">${date}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('tableBody').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th onclick="setSort('name')">Name / Email</th>
+          <th onclick="setSort('archetype')">Archetype</th>
+          <th onclick="setSort('company')">Company</th>
+          <th onclick="setSort('role')">Role</th>
+          <th onclick="setSort('drive')">Drive ↕</th>
+          <th onclick="setSort('influence')">Influence ↕</th>
+          <th onclick="setSort('timestamp')">Date ↕</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderCharts() {
+  if (!allResults.length) return;
+
+  // Trait averages
+  const traitAvgs = {};
+  TRAIT_DEFS.forEach(t => {
+    const vals = allResults.map(r => r.traits?.[t.key] || 0).filter(v => v > 0);
+    traitAvgs[t.key] = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+  });
+
+  // Archetype distribution
+  const archetypeDist = {};
+  allResults.forEach(r => {
+    const a = r.archetype?.name || 'Unknown';
+    archetypeDist[a] = (archetypeDist[a]||0)+1;
+  });
+
+  // Company split
+  const companySplit = {
+    'Premier — Temecula': allResults.filter(r=>r.company?.includes('Premier')).length,
+    'Pinnacle — Dallas': allResults.filter(r=>r.company?.includes('Pinnacle')).length,
+  };
+
+  // Role distribution
+  const roleDist = {};
+  allResults.forEach(r => { roleDist[r.role||'Unknown'] = (roleDist[r.role||'Unknown']||0)+1; });
+
+  const maxTrait = Math.max(...Object.values(traitAvgs));
+  const maxArch = Math.max(...Object.values(archetypeDist));
+
+  document.getElementById('chartGrid').innerHTML = `
+    <div class="chart-card">
+      <h4>Average Trait Scores — Team</h4>
+      <div class="bar-chart">
+        ${TRAIT_DEFS.map(t => `
+          <div class="bar-row">
+            <div class="bar-label">${t.label.split(' & ')[0]}</div>
+            <div class="bar-outer">
+              <div class="bar-inner ${t.gold?'gold-bar':''}" style="width:${traitAvgs[t.key]}%">
+                <span class="bar-val ${t.gold?'dark':''}">${traitAvgs[t.key]}</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="chart-card">
+      <h4>Archetype Distribution</h4>
+      <div class="bar-chart">
+        ${Object.entries(archetypeDist).sort((a,b)=>b[1]-a[1]).map(([name,count]) => `
+          <div class="bar-row">
+            <div class="bar-label">${name}</div>
+            <div class="bar-outer">
+              <div class="bar-inner" style="width:${Math.round(count/allResults.length*100)}%">
+                <span class="bar-val">${count} (${Math.round(count/allResults.length*100)}%)</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="chart-card">
+      <h4>Assessments by Company</h4>
+      <div class="bar-chart">
+        ${Object.entries(companySplit).map(([name,count]) => `
+          <div class="bar-row">
+            <div class="bar-label" style="width:140px">${name.split(' — ')[0]}</div>
+            <div class="bar-outer">
+              <div class="bar-inner gold-bar" style="width:${allResults.length?Math.round(count/allResults.length*100):0}%">
+                <span class="bar-val dark">${count}</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="chart-card">
+      <h4>Role Breakdown</h4>
+      <div class="bar-chart">
+        ${Object.entries(roleDist).sort((a,b)=>b[1]-a[1]).map(([role,count]) => `
+          <div class="bar-row">
+            <div class="bar-label">${role}</div>
+            <div class="bar-outer">
+              <div class="bar-inner" style="width:${Math.round(count/allResults.length*100)}%">
+                <span class="bar-val">${count}</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ── DETAIL MODAL ──
+function openDetail(id) {
+  const r = allResults.find(x => x.id === id);
+  if (!r) return;
+
+  const first = r.name?.split(' ')[0] || r.name || 'this person';
+  const archetypeId = r.archetype?.id || 'advisor';
+  const coaching = COACHING[archetypeId] || COACHING.advisor;
+  const date = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', {dateStyle:'long',timeStyle:'short'}) : '—';
+  const compTag = r.company?.includes('Premier') ? 'tag-premier' : 'tag-pinnacle';
+
+  const traitBars = TRAIT_DEFS.map(t => `
+    <div class="modal-trait-row">
+      <div class="modal-trait-name">${t.label.split(' & ')[0]}</div>
+      <div class="modal-bar-wrap"><div class="modal-bar-fill ${t.gold?'gold':''}" style="width:${r.traits?.[t.key]||0}%"></div></div>
+      <div class="modal-score">${r.traits?.[t.key]||0}</div>
+    </div>`).join('');
+
+  const roleFitRows = (r.roleFit || []).sort((a,b)=>b.score-a.score).map(rf => {
+    const cls = rf.score>=70?'high':rf.score>=50?'mid':'low';
+    return `<div class="role-fit-item">
+      <div class="role-fit-name">${rf.name}</div>
+      <div class="role-fit-bar-wrap"><div class="role-fit-fill fit-${cls}" style="width:${rf.score}%"></div></div>
+      <div class="role-fit-pct">${rf.score}%</div>
+      <span class="tag-${cls}">${rf.score>=70?'Strong':rf.score>=50?'Moderate':'Low'}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-hero">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="eyebrow">Sales DNA Profile</div>
+      <div class="name">${r.name}</div>
+      <div class="archetype">${r.archetype?.icon||''} ${r.archetype?.name||'—'}</div>
+      <div class="meta">
+        <span class="company-tag ${compTag}" style="margin-right:8px">${r.company?.includes('Premier')?'Premier':'Pinnacle'}</span>
+        ${r.role||'—'} · ${r.email||'No email'} · ${date}
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>Behavioral Trait Scores</h4>
+        ${traitBars}
+      </div>
+      <div class="modal-section">
+        <h4>Role Fit Analysis</h4>
+        ${roleFitRows || '<p style="color:var(--slate);font-size:13px">No role fit data available.</p>'}
+      </div>
+      <div class="modal-section">
+        <h4>Manager Coaching — ${first}</h4>
+        ${coaching.map(c=>`<div class="coaching-item">${c}</div>`).join('')}
+      </div>
+    </div>`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ── VIEWS ──
+function showView(view) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
+  document.getElementById('chartsView').style.display = view === 'charts' ? 'block' : 'none';
+}
+
+// ── EXPORT CSV ──
+function exportCSV() {
+  const headers = ['Name','Email','Role','Company','Archetype','Drive','Influence','Process','Resilience','Urgency','Empathy','Structure','Date'];
+  const rows = filteredResults.map(r => [
+    r.name, r.email, r.role, r.company, r.archetype?.name,
+    r.traits?.drive, r.traits?.influence, r.traits?.process, r.traits?.resilience,
+    r.traits?.urgency, r.traits?.empathy, r.traits?.structure,
+    r.timestamp ? new Date(r.timestamp).toLocaleDateString() : ''
+  ].map(v => `"${v||''}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'sales-dna-results.csv'; a.click();
+}
+
+// ── MOCK DATA (when no backend) ──
+function getMockData() {
+  return [
+    {id:'mock1',name:'Brooks Boyer',email:'brooks@pinnaclepools.com',role:'New Sales Rep',company:'Pinnacle Pools & Spas — Dallas',archetype:{id:'hunter',name:'Hunter',icon:'🎯',desc:'Relentless pipeline builder.'},traits:{drive:88,influence:72,process:61,resilience:83,urgency:85,empathy:58,structure:55},roleFit:[{name:'Pool Sales Rep',score:86},{name:'Senior Closer',score:81},{name:'Sales Manager',score:52}],timestamp:new Date().toISOString()},
+    {id:'mock2',name:'Festus Fox',email:'ffox@pinnpools.com',role:'Sales Manager',company:'Pinnacle Pools & Spas — Dallas',archetype:{id:'advisor',name:'Advisor',icon:'🧭',desc:'Consultative and patient.'},traits:{drive:74,influence:82,process:79,resilience:71,urgency:65,empathy:88,structure:76},roleFit:[{name:'Sales Manager',score:90},{name:'Design-Build Consultant',score:85},{name:'Pool Sales Rep',score:74}],timestamp:new Date(Date.now()-86400000).toISOString()},
+    {id:'mock3',name:'Sample Rep',email:'rep@premierpools.com',role:'Sales Rep',company:'Premier Pools & Spas — Temecula',archetype:{id:'connector',name:'Connector',icon:'🤝',desc:'Relationship-first seller.'},traits:{drive:65,influence:91,process:58,resilience:69,urgency:54,empathy:93,structure:52},roleFit:[{name:'Pool Sales Rep',score:82},{name:'Design-Build Consultant',score:79},{name:'Senior Closer',score:58}],timestamp:new Date(Date.now()-172800000).toISOString()},
+  ];
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales DNA Assessment — Premier & Pinnacle Pools</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1e38;
+    --navy-mid: #1a2f52;
+    --navy-light: #243d6b;
+    --gold: #c9973a;
+    --gold-light: #e8b857;
+    --gold-pale: #f5e8cc;
+    --cream: #faf7f2;
+    --white: #ffffff;
+    --slate: #6b7a94;
+    --text: #1a1a2e;
+    --success: #2e7d32;
+    --border: rgba(201,151,58,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── COVER SCREEN ── */
+  #cover {
+    min-height: 100vh;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  #cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(201,151,58,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,151,58,0.07) 0%, transparent 50%);
+  }
+  .cover-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,151,58,0.4);
+    padding: 6px 16px;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 900;
+    color: var(--white);
+    text-align: center;
+    line-height: 1.05;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .cover-title span { color: var(--gold); }
+  .cover-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+    letter-spacing: 0.5px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 52px;
+    position: relative;
+  }
+  .cover-meta-item {
+    text-align: center;
+  }
+  .cover-meta-item .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .cover-meta-item .lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .divider-line {
+    width: 1px;
+    height: 40px;
+    background: rgba(201,151,58,0.25);
+    align-self: center;
+  }
+
+  /* Name / Role form */
+  .intake-form {
+    position: relative;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,151,58,0.2);
+    padding: 32px;
+    width: 100%;
+    max-width: 460px;
+    margin-bottom: 32px;
+  }
+  .intake-form h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .field-row { display: flex; flex-direction: column; gap: 16px; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-group label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+  }
+  .field-group input, .field-group select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,151,58,0.25);
+    color: var(--white);
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus, .field-group select:focus {
+    border-color: var(--gold);
+  }
+  .field-group select option { background: var(--navy); color: var(--white); }
+
+  .btn-start {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 16px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-start:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-start:active { transform: translateY(0); }
+  .cover-disclaimer {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    max-width: 360px;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  /* ── ASSESSMENT SCREEN ── */
+  #assessment { display: none; min-height: 100vh; }
+
+  .assess-header {
+    background: var(--navy);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(201,151,58,0.15);
+  }
+  .assess-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--white);
+    font-weight: 700;
+  }
+  .assess-logo span { color: var(--gold); }
+  .progress-wrap {
+    flex: 1;
+    max-width: 300px;
+    margin: 0 32px;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .section-label {
+    font-size: 12px;
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  .assess-body {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .section-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(201,151,58,0.15);
+  }
+  .section-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  /* Question Card */
+  .question-card {
+    background: var(--white);
+    border: 1px solid rgba(15,30,56,0.08);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(15,30,56,0.04);
+    transition: box-shadow 0.2s;
+    animation: slideUp 0.3s ease both;
+  }
+  .question-card:hover { box-shadow: 0 4px 20px rgba(15,30,56,0.08); }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--slate);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--navy);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .scale-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--slate);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .scale-options {
+    display: flex;
+    gap: 8px;
+  }
+  .scale-btn {
+    flex: 1;
+    height: 44px;
+    border: 1.5px solid rgba(15,30,56,0.12);
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--slate);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .scale-btn:hover {
+    border-color: var(--gold);
+    color: var(--navy);
+    background: var(--gold-pale);
+  }
+  .scale-btn.selected {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+  .scale-btn.selected::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  /* Adjective checklist */
+  .adj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .adj-btn {
+    padding: 10px 14px;
+    border: 1.5px solid rgba(15,30,56,0.12);
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--slate);
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .adj-btn:hover { border-color: var(--gold); color: var(--navy); background: var(--gold-pale); }
+  .adj-btn.selected { background: var(--navy); border-color: var(--navy); color: var(--white); }
+  .adj-instructions {
+    font-size: 12px;
+    color: var(--slate);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+  .btn-back {
+    background: transparent;
+    border: 1px solid rgba(15,30,56,0.15);
+    color: var(--slate);
+    padding: 12px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-next {
+    background: var(--navy);
+    border: none;
+    color: var(--white);
+    padding: 14px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-next::after {
+    content: '→';
+    margin-left: 8px;
+  }
+  .btn-next:hover { background: var(--navy-light); transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .error-msg {
+    font-size: 13px;
+    color: #c0392b;
+    margin-top: 8px;
+    display: none;
+  }
+
+  /* ── RESULTS SCREEN ── */
+  #results { display: none; }
+
+  .results-hero {
+    background: var(--navy);
+    padding: 60px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .results-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 80% at 90% 50%, rgba(201,151,58,0.1) 0%, transparent 60%);
+  }
+  .results-hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .results-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .results-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .results-archetype {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 4vw, 32px);
+    color: var(--gold);
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+  .results-tagline {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+
+  .profile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(201,151,58,0.12);
+    border: 1px solid rgba(201,151,58,0.3);
+    padding: 12px 20px;
+    margin-top: 28px;
+  }
+  .profile-badge .badge-icon { font-size: 20px; }
+  .profile-badge .badge-text { font-size: 13px; color: var(--gold-light); letter-spacing: 0.5px; }
+
+  .results-body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Trait bars */
+  .traits-section {
+    margin-bottom: 48px;
+  }
+  .section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--slate);
+    margin-bottom: 28px;
+  }
+
+  .trait-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .trait-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    width: 160px;
+    flex-shrink: 0;
+  }
+  .trait-bar-wrap {
+    flex: 1;
+    height: 10px;
+    background: rgba(15,30,56,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .trait-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--navy-light));
+    transition: width 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+    width: 0%;
+  }
+  .trait-bar-fill.gold { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .trait-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--slate);
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .trait-desc {
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.5;
+    margin-top: 2px;
+    margin-left: 176px;
+    margin-bottom: 8px;
+  }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .insight-card {
+    background: var(--white);
+    border: 1px solid rgba(15,30,56,0.08);
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(15,30,56,0.04);
+  }
+  .insight-card-icon { font-size: 28px; margin-bottom: 12px; }
+  .insight-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .insight-card-body {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.7;
+  }
+
+  /* Role fit */
+  .role-fit-section { margin-bottom: 48px; }
+  .role-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--white);
+    border: 1px solid rgba(15,30,56,0.08);
+    margin-bottom: 10px;
+  }
+  .role-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    flex: 1;
+  }
+  .role-fit-bar {
+    width: 120px;
+    height: 6px;
+    background: rgba(15,30,56,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .role-fit-fill {
+    height: 100%;
+    transition: width 1.2s ease;
+    width: 0%;
+  }
+  .fit-high { background: #2e7d32; }
+  .fit-mid { background: var(--gold); }
+  .fit-low { background: #c0392b; }
+  .role-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--slate);
+    width: 36px;
+    text-align: right;
+  }
+  .fit-tag {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    font-weight: 600;
+    width: 60px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .fit-tag.high { background: rgba(46,125,50,0.1); color: #2e7d32; }
+  .fit-tag.mid { background: rgba(201,151,58,0.15); color: #8a6400; }
+  .fit-tag.low { background: rgba(192,57,43,0.1); color: #c0392b; }
+
+  /* Manager coaching box */
+  .coaching-section {
+    background: var(--navy);
+    padding: 40px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .coaching-section::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(201,151,58,0.06);
+  }
+  .coaching-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .coaching-section .sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .coaching-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }
+  .coaching-list li {
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+  }
+  .coaching-list li::before {
+    content: '▸';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Red flags */
+  .flags-section { margin-bottom: 48px; }
+  .flag-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--white);
+    border-left: 3px solid var(--gold);
+    margin-bottom: 12px;
+    box-shadow: 0 1px 6px rgba(15,30,56,0.04);
+  }
+  .flag-icon { font-size: 18px; flex-shrink: 0; }
+  .flag-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .flag-text strong { color: var(--navy); }
+
+  /* Archetype comparison */
+  .archetype-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .archetype-card {
+    border: 1.5px solid rgba(15,30,56,0.1);
+    padding: 20px;
+    text-align: center;
+    cursor: default;
+  }
+  .archetype-card.active {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  }
+  .archetype-card .arch-icon { font-size: 24px; margin-bottom: 8px; }
+  .archetype-card .arch-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .archetype-card.active .arch-name { color: var(--white); }
+  .archetype-card .arch-desc { font-size: 11px; color: var(--slate); line-height: 1.5; }
+  .archetype-card.active .arch-desc { color: rgba(255,255,255,0.55); }
+  .archetype-card .arch-badge {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    margin-top: 8px;
+  }
+
+  /* Print / actions */
+  .actions-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 60px;
+  }
+  .btn-print {
+    background: var(--gold);
+    border: none;
+    color: var(--navy);
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-print:hover { background: var(--gold-light); }
+  .btn-retake {
+    background: transparent;
+    border: 1.5px solid rgba(15,30,56,0.2);
+    color: var(--navy);
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-retake:hover { border-color: var(--navy); }
+
+  /* Utility */
+  .hidden { display: none !important; }
+
+  @media print {
+    #cover, .actions-row { display: none; }
+    #results { display: block !important; }
+    .results-hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 600px) {
+    .cover-meta { gap: 16px; }
+    .assess-header { padding: 16px; flex-wrap: wrap; gap: 12px; }
+    .progress-wrap { order: 3; max-width: 100%; flex-basis: 100%; margin: 0; }
+    .trait-name { width: 120px; }
+    .trait-desc { margin-left: 136px; }
+    .coaching-section { padding: 24px; }
+    .intake-form { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     COVER / INTAKE SCREEN
+════════════════════════════════════════════ -->
+<div id="cover">
+  <div class="cover-badge">Premier & Pinnacle Pools · Sales DNA</div>
+
+  <h1 class="cover-title">Sales DNA<br><span>Assessment</span></h1>
+  <p class="cover-sub">Behavioral profile for pool sales professionals</p>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="num">36</div>
+      <div class="lbl">Questions</div>
+    </div>
+    <div class="divider-line"></div>
+    <div class="cover-meta-item">
+      <div class="num">~12</div>
+      <div class="lbl">Minutes</div>
+    </div>
+    <div class="divider-line"></div>
+    <div class="cover-meta-item">
+      <div class="num">7</div>
+      <div class="lbl">Trait Dims.</div>
+    </div>
+  </div>
+
+  <div class="intake-form">
+    <h3>Tell us about you</h3>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Full Name</label>
+        <input type="text" id="respName" placeholder="e.g. Brooks Boyer" />
+      </div>
+      <div class="field-group">
+        <label>Email Address</label>
+        <input type="email" id="respEmail" placeholder="your@email.com" />
+      </div>
+      <div class="field-group">
+        <label>Role / Position</label>
+        <select id="respRole">
+          <option value="">Select your current role...</option>
+          <option value="New Sales Rep">New Sales Rep (< 6 months)</option>
+          <option value="Sales Rep">Sales Rep</option>
+          <option value="Senior Sales Rep">Senior Sales Rep</option>
+          <option value="Sales Manager">Sales Manager</option>
+          <option value="Candidate">Candidate (Applying)</option>
+          <option value="Owner">Owner / Principal</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Company</label>
+        <select id="respCompany">
+          <option value="Premier Pools & Spas — Temecula">Premier Pools & Spas — Temecula</option>
+          <option value="Pinnacle Pools & Spas — Dallas">Pinnacle Pools & Spas — Dallas</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startAssessment()">Begin Assessment</button>
+  <p class="cover-disclaimer">No right or wrong answers. Respond as you naturally are, not how you think you should be. Takes ~12 minutes.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ASSESSMENT SCREEN
+════════════════════════════════════════════ -->
+<div id="assessment">
+  <div class="assess-header">
+    <div class="assess-logo">Sales <span>DNA</span></div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressText">Section 1 of 5</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="section-label" id="sectionLabel">Drive & Ambition</div>
+  </div>
+
+  <div class="assess-body" id="assessBody"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     RESULTS SCREEN
+════════════════════════════════════════════ -->
+<div id="results">
+  <div class="results-hero">
+    <div class="results-hero-inner">
+      <div class="results-eyebrow">Sales DNA Profile Report</div>
+      <div class="results-name" id="rName">—</div>
+      <div class="results-archetype" id="rArchetype">—</div>
+      <div class="results-tagline" id="rTagline">—</div>
+      <div class="profile-badge">
+        <span class="badge-icon" id="rBadgeIcon">🏆</span>
+        <span class="badge-text" id="rBadgeText">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-body">
+
+    <!-- Trait Bars -->
+    <div class="traits-section">
+      <div class="section-heading">Behavioral Trait Profile</div>
+      <div class="section-sub">How you're wired across 7 dimensions that drive sales performance</div>
+      <div id="traitBars"></div>
+    </div>
+
+    <!-- Archetypes -->
+    <div class="section-heading" style="margin-bottom:6px">Sales Archetype Spectrum</div>
+    <div class="section-sub">Where you land among the 5 pool-sales personality types</div>
+    <div class="archetype-row" id="archetypeRow"></div>
+
+    <!-- Insight Cards -->
+    <div class="section-heading" style="margin-bottom:6px">How You Sell</div>
+    <div class="section-sub" style="margin-bottom:24px">Your natural strengths and potential blind spots</div>
+    <div class="cards-grid" id="insightCards"></div>
+
+    <!-- Role Fit -->
+    <div class="role-fit-section">
+      <div class="section-heading">Role Fit Analysis</div>
+      <div class="section-sub" style="margin-bottom:20px">Predicted fit across pool-company positions</div>
+      <div id="roleFitRows"></div>
+    </div>
+
+    <!-- Manager Coaching -->
+    <div class="coaching-section">
+      <div class="sub">Manager Playbook</div>
+      <h3>How to Lead & Coach <span id="coachName">This Person</span></h3>
+      <ul class="coaching-list" id="coachingList"></ul>
+    </div>
+
+    <!-- Watch-Outs -->
+    <div class="flags-section">
+      <div class="section-heading">Watch-Outs</div>
+      <div class="section-sub" style="margin-bottom:20px">Patterns to monitor — not disqualifiers, but areas to develop</div>
+      <div id="flagsList"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-row">
+      <button class="btn-print" onclick="window.print()">🖨 Print / Save PDF</button>
+      <button class="btn-retake" onclick="retake()">← Retake Assessment</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA — SECTIONS & QUESTIONS
+// ═══════════════════════════════════════
+
+const SECTIONS = [
+  {
+    id: 'drive',
+    title: 'Drive & Ambition',
+    desc: 'How you approach goals, competition, and personal achievement.',
+    questions: [
+      { id: 'd1', text: 'I set aggressive personal income goals and hold myself accountable to them.', scale: true },
+      { id: 'd2', text: 'I\'m energized by competition — whether against others or a personal record.', scale: true },
+      { id: 'd3', text: 'When I miss a target, I immediately analyze what went wrong and adjust.', scale: true },
+      { id: 'd4', text: 'I prefer a job where pay is mostly commission-based rather than salary.', scale: true },
+      { id: 'd5', text: 'I\'d rather lose a deal on my own terms than win one by lowering my standards.', scale: true },
+      { id: 'd6', text: 'I actively seek out the top performer on any team and figure out what they do differently.', scale: true },
+    ]
+  },
+  {
+    id: 'influence',
+    title: 'Influence & People Skills',
+    desc: 'How you connect with customers, build trust, and communicate.',
+    questions: [
+      { id: 'i1', text: 'I can read a room quickly and adjust my style to match the energy in front of me.', scale: true },
+      { id: 'i2', text: 'I remember personal details about customers (kids\' names, hobbies, concerns) without trying.', scale: true },
+      { id: 'i3', text: 'I\'m comfortable asking directly for someone\'s business — it doesn\'t feel awkward.', scale: true },
+      { id: 'i4', text: 'I often find myself becoming friends with clients after the sale closes.', scale: true },
+      { id: 'i5', text: 'When a customer pushes back, I stay calm and find it interesting rather than stressful.', scale: true },
+      { id: 'i6', text: 'I genuinely enjoy the discovery phase of a sale — learning about a customer\'s family and vision.', scale: true },
+    ]
+  },
+  {
+    id: 'process',
+    title: 'Process & Follow-Through',
+    desc: 'How you manage your pipeline, details, and commitments.',
+    questions: [
+      { id: 'p1', text: 'I consistently follow up with leads — even cold ones — on a set schedule.', scale: true },
+      { id: 'p2', text: 'I keep accurate, up-to-date notes on every prospect I\'m working.', scale: true },
+      { id: 'p3', text: 'I use a structured process for every sales appointment rather than winging it.', scale: true },
+      { id: 'p4', text: 'I\'m comfortable with spreadsheets and pricing tools; numbers don\'t intimidate me.', scale: true },
+      { id: 'p5', text: 'I rarely drop the ball on commitments — if I say I\'ll call Tuesday, I call Tuesday.', scale: true },
+      { id: 'p6', text: 'I proactively update customers on project timelines even when nothing has changed.', scale: true },
+    ]
+  },
+  {
+    id: 'resilience',
+    title: 'Resilience & Adaptability',
+    desc: 'How you handle rejection, stress, change, and ambiguity.',
+    questions: [
+      { id: 'r1', text: 'A string of "no\'s" might slow me down briefly, but doesn\'t knock me off course.', scale: true },
+      { id: 'r2', text: 'I\'m comfortable when job descriptions are loose or my role evolves quickly.', scale: true },
+      { id: 'r3', text: 'I perform well under pressure — tight deadlines or high-stakes presentations bring out my best.', scale: true },
+      { id: 'r4', text: 'I can pivot mid-presentation when I sense the customer\'s priorities have shifted.', scale: true },
+      { id: 'r5', text: 'I rarely take objections or rejections personally.', scale: true },
+      { id: 'r6', text: 'I view customer complaints as an opportunity to deepen the relationship.', scale: true },
+    ]
+  },
+  {
+    id: 'adjectives',
+    title: 'Self & Perception',
+    desc: 'Two quick word-choice exercises that reveal how you see yourself and how others see you.',
+    questions: [
+      {
+        id: 'adj1',
+        text: 'Choose the words that describe how YOU see yourself (select 5–8):',
+        adjectives: true,
+        words: ['Driven','Empathetic','Methodical','Spontaneous','Competitive','Collaborative','Analytical','Persuasive','Patient','Urgent','Creative','Reliable','Bold','Detailed','Enthusiastic','Independent','Strategic','Warm','Direct','Diplomatic','Adaptable','Persistent','Curious','Confident']
+      },
+      {
+        id: 'adj2',
+        text: 'Choose the words that describe how OTHERS typically see you (select 5–8):',
+        adjectives: true,
+        words: ['Ambitious','Easy-going','Precise','Intense','Engaging','Reserved','Practical','Inspiring','Calm','Energetic','Thorough','Spontaneous','Leader','Listener','Closer','Visionary','Supportive','Direct','Organized','Creative','Confident','Steady','Assertive','Approachable']
+      }
+    ]
+  }
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let state = {
+  name: '', email: '', role: '', company: '',
+  currentSection: 0,
+  answers: {},
+  adjAnswers: {}
+};
+
+// ═══════════════════════════════════════
+// START
+// ═══════════════════════════════════════
+function startAssessment() {
+  const name = document.getElementById('respName').value.trim();
+  const email = document.getElementById('respEmail').value.trim();
+  const role = document.getElementById('respRole').value;
+  const company = document.getElementById('respCompany').value;
+  if (!name || !role) { alert('Please enter your name and select your role.'); return; }
+  state.name = name; state.email = email; state.role = role; state.company = company;
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('assessment').style.display = 'block';
+  renderSection(0);
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════
+// RENDER SECTION
+// ═══════════════════════════════════════
+function renderSection(idx) {
+  state.currentSection = idx;
+  const sec = SECTIONS[idx];
+  const body = document.getElementById('assessBody');
+  const totalQ = SECTIONS.reduce((a,s) => a + s.questions.length, 0);
+  const doneQ = SECTIONS.slice(0, idx).reduce((a,s) => a + s.questions.length, 0);
+  const pct = Math.round(doneQ / totalQ * 100);
+
+  document.getElementById('progressText').textContent = `Section ${idx+1} of ${SECTIONS.length}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('sectionLabel').textContent = sec.title;
+
+  let html = `
+    <div class="section-header">
+      <div class="section-number">Section ${idx+1} of ${SECTIONS.length}</div>
+      <div class="section-title">${sec.title}</div>
+      <div class="section-desc">${sec.desc}</div>
+    </div>`;
+
+  sec.questions.forEach((q, qi) => {
+    const globalIdx = doneQ + qi + 1;
+    if (q.adjectives) {
+      const saved = state.adjAnswers[q.id] || [];
+      html += `
+        <div class="question-card" style="animation-delay:${qi*0.05}s">
+          <div class="q-num">Q${globalIdx}</div>
+          <div class="q-text">${q.text}</div>
+          <div class="adj-instructions">Select 5 to 8 words — go with your gut, not what sounds best.</div>
+          <div class="adj-grid" id="adj_${q.id}">
+            ${q.words.map(w => `<button class="adj-btn${saved.includes(w) ? ' selected' : ''}" onclick="toggleAdj('${q.id}', '${w}', this)">${w}</button>`).join('')}
+          </div>
+          <div class="error-msg" id="err_${q.id}">Please select 5–8 words before continuing.</div>
+        </div>`;
+    } else {
+      const saved = state.answers[q.id];
+      html += `
+        <div class="question-card" style="animation-delay:${qi*0.05}s">
+          <div class="q-num">Q${globalIdx}</div>
+          <div class="q-text">${q.text}</div>
+          <div class="scale-wrap">
+            <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+            <div class="scale-options">
+              ${[1,2,3,4,5].map(v => `<button class="scale-btn${saved==v?' selected':''}" onclick="selectScale('${q.id}', ${v}, this)">${v}</button>`).join('')}
+            </div>
+          </div>
+          <div class="error-msg" id="err_${q.id}">Please answer this question.</div>
+        </div>`;
+    }
+  });
+
+  html += `
+    <div class="nav-row">
+      ${idx > 0 ? `<button class="btn-back" onclick="goBack()">← Back</button>` : `<div></div>`}
+      <button class="btn-next" onclick="goNext()">${idx < SECTIONS.length-1 ? 'Next Section' : 'See My Results'}</button>
+    </div>`;
+
+  body.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function selectScale(qid, val, btn) {
+  state.answers[qid] = val;
+  btn.closest('.scale-options').querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('err_'+qid).style.display = 'none';
+}
+
+function toggleAdj(qid, word, btn) {
+  if (!state.adjAnswers[qid]) state.adjAnswers[qid] = [];
+  const arr = state.adjAnswers[qid];
+  if (arr.includes(word)) {
+    arr.splice(arr.indexOf(word), 1);
+    btn.classList.remove('selected');
+  } else {
+    if (arr.length >= 8) return;
+    arr.push(word);
+    btn.classList.add('selected');
+  }
+  document.getElementById('err_'+qid).style.display = 'none';
+}
+
+function goBack() {
+  renderSection(state.currentSection - 1);
+}
+
+function goNext() {
+  const sec = SECTIONS[state.currentSection];
+  let valid = true;
+  sec.questions.forEach(q => {
+    if (q.adjectives) {
+      const arr = state.adjAnswers[q.id] || [];
+      if (arr.length < 5) { document.getElementById('err_'+q.id).style.display = 'block'; valid = false; }
+    } else {
+      if (!state.answers[q.id]) { document.getElementById('err_'+q.id).style.display = 'block'; valid = false; }
+    }
+  });
+  if (!valid) { document.querySelector('.error-msg[style*="block"]')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+
+  if (state.currentSection < SECTIONS.length - 1) {
+    renderSection(state.currentSection + 1);
+  } else {
+    showResults();
+  }
+}
+
+// ═══════════════════════════════════════
+// SCORING ENGINE
+// ═══════════════════════════════════════
+function scoreSection(ids) {
+  const vals = ids.map(id => state.answers[id] || 3);
+  return Math.round((vals.reduce((a,b)=>a+b,0) / (ids.length * 5)) * 100);
+}
+
+function calcTraits() {
+  return {
+    drive:       scoreSection(['d1','d2','d3','d4','d5','d6']),
+    influence:   scoreSection(['i1','i2','i3','i4','i5','i6']),
+    process:     scoreSection(['p1','p2','p3','p4','p5','p6']),
+    resilience:  scoreSection(['r1','r2','r3','r4','r5','r6']),
+    // Derived traits from combinations
+    urgency:     scoreSection(['d2','d4','i3','r3']),
+    empathy:     scoreSection(['i2','i4','i6','r6']),
+    structure:   scoreSection(['p2','p3','p4','p5']),
+  };
+}
+
+const ARCHETYPES = [
+  { id:'hunter',   icon:'🎯', name:'The Hunter',   desc:'Relentless pipeline builder. Thrives on new leads, loves the open-ended close.',        threshold: t => t.drive >= 75 && t.influence >= 65 },
+  { id:'connector',icon:'🤝', name:'The Connector', desc:'Relationship-first. Sells through trust, referrals, and long-term rapport.',            threshold: t => t.influence >= 78 && t.empathy >= 70 },
+  { id:'architect',icon:'📐', name:'The Architect', desc:'Process-driven. Excels at complex specs, pricing, and managing customer expectations.', threshold: t => t.process >= 75 && t.structure >= 70 },
+  { id:'closer',   icon:'⚡', name:'The Closer',    desc:'Persuasive and urgent. Reads objections as invitations and knows when to go for it.',   threshold: t => t.drive >= 70 && t.resilience >= 70 && t.influence >= 60 },
+  { id:'advisor',  icon:'🧭', name:'The Advisor',   desc:'Consultative and patient. Customers lean on them as a trusted expert, not just a rep.', threshold: t => t.empathy >= 72 && t.process >= 65 },
+];
+
+function getArchetype(traits) {
+  for (const a of ARCHETYPES) { if (a.threshold(traits)) return a; }
+  // fallback: highest combined
+  const scores = [
+    { ...ARCHETYPES[0], s: traits.drive + traits.influence },
+    { ...ARCHETYPES[1], s: traits.influence + traits.empathy },
+    { ...ARCHETYPES[2], s: traits.process + traits.structure },
+    { ...ARCHETYPES[3], s: traits.drive + traits.resilience },
+    { ...ARCHETYPES[4], s: traits.empathy + traits.process },
+  ];
+  return scores.sort((a,b) => b.s - a.s)[0];
+}
+
+function getRoleFit(traits) {
+  return [
+    { name: 'Pool Sales Rep (Primary)',    score: Math.round((traits.drive*0.35 + traits.influence*0.35 + traits.resilience*0.2 + traits.process*0.1)) },
+    { name: 'Senior Closer / Luxury Homes',score: Math.round((traits.drive*0.3 + traits.influence*0.3 + traits.urgency*0.25 + traits.empathy*0.15)) },
+    { name: 'Design-Build Consultant',     score: Math.round((traits.empathy*0.35 + traits.process*0.3 + traits.influence*0.2 + traits.structure*0.15)) },
+    { name: 'Sales Manager / Team Lead',   score: Math.round((traits.drive*0.25 + traits.process*0.3 + traits.resilience*0.25 + traits.influence*0.2)) },
+    { name: 'Project Coordinator',         score: Math.round((traits.process*0.45 + traits.structure*0.35 + traits.empathy*0.1 + traits.resilience*0.1)) },
+  ];
+}
+
+function getInsights(archetype, traits) {
+  const insights = {
+    hunter: [
+      { icon:'💪', title:'Natural Strength', body:'You generate your own energy. You don\'t wait for the phone to ring — you make calls, knock on doors, and treat every appointment like a championship game. Your close rate goes up in competitive markets.' },
+      { icon:'⚠️', title:'Blind Spot to Watch', body:'You can rush the relationship phase. High-ticket pool buyers ($80K+) need to feel heard before they\'re ready to decide. Slow down in discovery — let them talk 70% of the time.' },
+      { icon:'🔧', title:'Develop This Skill', body:'Deeper consultative listening. Practice the "3 Whys" technique: ask why a feature matters, then why that matters, then why that matters. You\'ll uncover the real buying motive.' },
+    ],
+    connector: [
+      { icon:'💪', title:'Natural Strength', body:'Customers love you. You build genuine rapport fast and your referral rate is likely above average. You\'ll outperform in communities where word-of-mouth drives buying decisions.' },
+      { icon:'⚠️', title:'Blind Spot to Watch', body:'The close may feel uncomfortable. You\'re so focused on the relationship that asking for the signature feels like pressure. But a timely close is a service — it helps them make a decision they already want to make.' },
+      { icon:'🔧', title:'Develop This Skill', body:'Urgency creation. Practice transitioning from rapport mode to decision mode: "Based on what you\'ve shared, I\'m confident this is the right fit — let\'s lock in your start date before the schedule fills."' },
+    ],
+    architect: [
+      { icon:'💪', title:'Natural Strength', body:'Customers trust your numbers. You\'re detail-oriented enough to catch scope creep before it becomes a dispute. Your proposals are clean, your pricing is accurate, and you manage expectations well.' },
+      { icon:'⚠️', title:'Blind Spot to Watch', body:'You can over-engineer the early conversation. Most buyers don\'t need the full technical breakdown in appointment 1 — they need to feel excited. Lead with the vision before the specs.' },
+      { icon:'🔧', title:'Develop This Skill', body:'Emotional selling. Before any design or pricing conversation, ask: "What would it mean for your family to have this space in your backyard?" Anchor the emotion before you deliver the logic.' },
+    ],
+    closer: [
+      { icon:'💪', title:'Natural Strength', body:'You can read buying signals and act on them. When the moment is right, you pull the trigger — and customers respond. You\'re a revenue multiplier in a high-volume market.' },
+      { icon:'⚠️', title:'Blind Spot to Watch', body:'You may steamroll the indecisive buyer. Not every customer responds to urgency. Learn to recognize the "slow burn" buyer who needs a second visit and patience, not a hard close.' },
+      { icon:'🔧', title:'Develop This Skill', body:'Post-sale relationship building. Your highest referral potential is right after a job completes. Build a system for 30/90/365-day check-ins — this turns one deal into three.' },
+    ],
+    advisor: [
+      { icon:'💪', title:'Natural Strength', body:'Customers buy from you because they trust your judgment, not just your price. You create the kind of relationship where they call you before getting a second bid. You\'re exceptional with complex, high-consideration purchases.' },
+      { icon:'⚠️', title:'Blind Spot to Watch', body:'The pipeline may run thin. Your deep focus on current customers can mean you underinvest in prospecting. If you\'re not filling the top of the funnel, even great close rates won\'t hit targets.' },
+      { icon:'🔧', title:'Develop This Skill', body:'Prospecting discipline. Block 90 minutes daily — non-negotiable — for outbound activity: referral asks, follow-up calls, and new lead engagement. Treat it like a customer appointment.' },
+    ]
+  };
+  return insights[archetype.id] || insights.hunter;
+}
+
+function getCoaching(archetype, name) {
+  const first = name.split(' ')[0];
+  const tips = {
+    hunter: [
+      `Set weekly activity metrics with ${first} — calls made, appointments set, proposals sent. They respond to scoreboards.`,
+      `Give them competitive context: where does their close rate or revenue rank? They'll push harder when they see the leaderboard.`,
+      `Check in on deal quality, not just deal count. High-drive reps sometimes discount or over-promise to close fast.`,
+      `Avoid micromanaging their process — they'll disengage. Give freedom within a framework.`,
+      `Channel their competitiveness positively: "Brooks, you're $30K from topping the board this month."`,
+    ],
+    connector: [
+      `Pair ${first} with complex customers who need a patient, trust-based approach — luxury builds, repeat buyers, referrals.`,
+      `Role-play the "ask for the business" moment monthly. Make closing a comfortable, practiced behavior.`,
+      `Celebrate referrals as loudly as closed sales — it reinforces their natural strength.`,
+      `Don't assign them cold prospecting-heavy roles — they'll burn out. They thrive on warm leads and relationship cultivation.`,
+      `Coach them to set clear "decision timelines" early in the sale so the close doesn't come as a surprise.`,
+    ],
+    architect: [
+      `${first} will excel when given tools: detailed proposal templates, accurate cost sheets, and clear project timelines to share with customers.`,
+      `Coach them to lead appointments with the customer's emotional vision before going into specs or pricing.`,
+      `They're a great fit for design-build, renovation, or large custom jobs where accuracy and process management matter.`,
+      `Give them structured follow-up templates — they'll use them consistently if they exist.`,
+      `Watch for "analysis paralysis." They may hesitate to present a proposal until it's perfect — encourage a "good enough to present" standard.`,
+    ],
+    closer: [
+      `${first} performs best on high-activity routes with large volumes of leads — give them a full pipeline.`,
+      `Monitor their customer satisfaction scores closely. High-pressure closes can create post-sale regret and cancellations.`,
+      `Coach them to identify which customer types need a slower touch and adjust their style accordingly.`,
+      `Use them strategically: bring them into stuck deals or hesitant prospects that a softer rep can't close.`,
+      `Celebrate their urgency — but tie bonuses to completed jobs and zero cancellations, not just signed contracts.`,
+    ],
+    advisor: [
+      `${first} thrives when positioned as an expert, not a salesperson. Give them credentials, case studies, and a professional presentation.`,
+      `Hold them accountable to prospecting metrics — their natural preference is to deepen existing relationships at the expense of filling the funnel.`,
+      `They're your best retention asset — pair them with past customers for upgrades, referrals, and warranty conversations.`,
+      `Ask them to document their process — they likely have a repeatable system that other reps would benefit from.`,
+      `Avoid high-pressure sales environments or aggressive quota structures; they'll shut down. Tie their compensation to long-term metrics: referral rate, customer satisfaction, and average job size.`,
+    ]
+  };
+  return tips[archetype.id] || tips.advisor;
+}
+
+function getFlags(traits, archetype) {
+  const flags = [];
+  if (traits.process < 55) flags.push({ icon:'📋', text: '<strong>Low process discipline:</strong> May lose deals through inconsistent follow-up. Build a mandatory CRM logging habit and weekly pipeline review.' });
+  if (traits.resilience < 55) flags.push({ icon:'🛡', text: '<strong>Rejection sensitivity:</strong> A slow week may cause disengagement. Build a reset ritual (daily debrief, exercise, morning routine) and check in proactively during slow periods.' });
+  if (traits.empathy < 50) flags.push({ icon:'👥', text: '<strong>Low relational warmth:</strong> May come across as transactional to customers making a major emotional purchase. Coach deeper discovery and active listening habits.' });
+  if (traits.urgency > 85 && traits.empathy < 60) flags.push({ icon:'⚡', text: '<strong>High urgency + low empathy:</strong> Risk of pressure-selling a decision that isn\'t ready. May generate cancellations or post-sale complaints. Monitor closely.' });
+  if (traits.drive < 55) flags.push({ icon:'🔋', text: '<strong>Low intrinsic drive:</strong> Commission-only or activity-based roles may be a poor fit. Consider whether this role aligns with their motivational wiring before investing further.' });
+  if (flags.length === 0) flags.push({ icon:'✅', text: '<strong>No significant risk flags detected.</strong> Trait profile is well-balanced for a pool sales role. Focus on skill development in the areas noted above.' });
+  return flags;
+}
+
+// ═══════════════════════════════════════
+// SHOW RESULTS
+// ═══════════════════════════════════════
+function showResults() {
+  document.getElementById('assessment').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo(0,0);
+
+  const traits = calcTraits();
+  const archetype = getArchetype(traits);
+  const roleFit = getRoleFit(traits);
+  const insights = getInsights(archetype, traits);
+  const coaching = getCoaching(archetype, state.name);
+  const flags = getFlags(traits, archetype);
+
+  // Hero
+  document.getElementById('rName').textContent = state.name;
+  document.getElementById('rArchetype').textContent = archetype.icon + ' ' + archetype.name;
+  document.getElementById('rTagline').textContent = archetype.desc + ` Assessed as: ${state.role} · ${state.company}`;
+  document.getElementById('rBadgeIcon').textContent = archetype.icon;
+  document.getElementById('rBadgeText').textContent = `${archetype.name} · ${state.role}`;
+
+  // Trait Bars
+  const traitDefs = [
+    { key:'drive',      label:'Drive & Ambition',    desc:'Competitiveness, income motivation, self-accountability', gold:false },
+    { key:'influence',  label:'Influence & Rapport',  desc:'Customer connection, communication style, trust-building', gold:false },
+    { key:'process',    label:'Process & Discipline', desc:'Pipeline management, follow-through, accuracy', gold:false },
+    { key:'resilience', label:'Resilience',            desc:'Rejection recovery, adaptability, performance under pressure', gold:false },
+    { key:'urgency',    label:'Urgency & Closing',     desc:'Ability to create momentum and ask for the business', gold:true },
+    { key:'empathy',    label:'Empathy & Warmth',      desc:'Emotional attunement with customers and their family', gold:true },
+    { key:'structure',  label:'Structural Thinking',   desc:'Detail-orientation, pricing accuracy, expectation management', gold:true },
+  ];
+  const barHtml = traitDefs.map(t => `
+    <div class="trait-row">
+      <div class="trait-name">${t.label}</div>
+      <div class="trait-bar-wrap"><div class="trait-bar-fill${t.gold?' gold':''}" data-val="${traits[t.key]}" style="width:0%"></div></div>
+      <div class="trait-score">${traits[t.key]}</div>
+    </div>
+    <div class="trait-desc">${t.desc}</div>
+  `).join('');
+  document.getElementById('traitBars').innerHTML = barHtml;
+
+  // Archetype row
+  document.getElementById('archetypeRow').innerHTML = ARCHETYPES.map(a => `
+    <div class="archetype-card ${a.id === archetype.id ? 'active' : ''}">
+      <div class="arch-icon">${a.icon}</div>
+      <div class="arch-name">${a.name}</div>
+      <div class="arch-desc">${a.desc}</div>
+      ${a.id === archetype.id ? '<div class="arch-badge">▶ Your Profile</div>' : ''}
+    </div>`).join('');
+
+  // Insight Cards
+  document.getElementById('insightCards').innerHTML = insights.map(c => `
+    <div class="insight-card">
+      <div class="insight-card-icon">${c.icon}</div>
+      <div class="insight-card-title">${c.title}</div>
+      <div class="insight-card-body">${c.body}</div>
+    </div>`).join('');
+
+  // Role Fit
+  const rfMax = Math.max(...roleFit.map(r=>r.score));
+  document.getElementById('roleFitRows').innerHTML = roleFit.sort((a,b)=>b.score-a.score).map(r => {
+    const pct = r.score;
+    const cls = pct >= 70 ? 'high' : pct >= 50 ? 'mid' : 'low';
+    const lbl = pct >= 70 ? 'Strong' : pct >= 50 ? 'Moderate' : 'Low';
+    return `<div class="role-row">
+      <div class="role-name">${r.name}</div>
+      <div class="role-fit-bar"><div class="role-fit-fill fit-${cls}" data-val="${pct}" style="width:0%"></div></div>
+      <div class="role-pct">${pct}%</div>
+      <div class="fit-tag ${cls}">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  // Coaching
+  const first = state.name.split(' ')[0];
+  document.getElementById('coachName').textContent = first;
+  document.getElementById('coachingList').innerHTML = coaching.map(c => `<li>${c}</li>`).join('');
+
+  // Flags
+  document.getElementById('flagsList').innerHTML = flags.map(f => `
+    <div class="flag-item">
+      <div class="flag-icon">${f.icon}</div>
+      <div class="flag-text">${f.text}</div>
+    </div>`).join('');
+
+  // Animate bars after slight delay
+  setTimeout(() => {
+    document.querySelectorAll('.trait-bar-fill').forEach(el => {
+      el.style.width = el.dataset.val + '%';
+    });
+    document.querySelectorAll('.role-fit-fill').forEach(el => {
+      el.style.width = el.dataset.val + '%';
+    });
+  }, 200);
+
+  // Save result to backend + send email
+  saveResult(traits, archetype, roleFit);
+}
+
+async function saveResult(traits, archetype, roleFit) {
+  try {
+    await fetch('/.netlify/functions/save-result', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: state.name,
+        email: state.email,
+        role: state.role,
+        company: state.company,
+        traits,
+        archetype: { id: archetype.id, name: archetype.name, desc: archetype.desc, icon: archetype.icon },
+        roleFit,
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch(e) {
+    console.warn('Could not save result:', e);
+  }
+}
+
+function retake() {
+  state = { name:'', email:'', role:'', company:'', currentSection:0, answers:{}, adjAnswers:{} };
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('cover').style.display = 'flex';
+  document.getElementById('respName').value = '';
+  document.getElementById('respEmail').value = '';
+  document.getElementById('respRole').value = '';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "sales-dna-app",
+  "version": "1.0.0",
+  "description": "Sales DNA Assessment & Dashboard — Premier & Pinnacle Pools",
+  "dependencies": {
+    "@netlify/blobs": "^8.0.0"
+  }
+}
