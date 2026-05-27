@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Profile Assessment — ABCD Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --navy:#0f1e38;--navy-mid:#1a2f52;--navy-light:#243d6b;
+  --gold:#c9973a;--gold-light:#e8b857;--gold-pale:#f5e8cc;
+  --cream:#faf7f2;--white:#fff;--slate:#6b7a94;--text:#1a1a2e;
+  --A:#2e7d32;--B:#1565c0;--C:#7b1fa2;--D:#bf360c;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+/* COVER */
+#cover{min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;position:relative;overflow:hidden;}
+#cover::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 85% 15%,rgba(201,151,58,.13) 0%,transparent 55%),radial-gradient(ellipse 40% 60% at 5% 85%,rgba(201,151,58,.07) 0%,transparent 50%);}
+.eyebrow{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,151,58,.35);padding:6px 16px;margin-bottom:40px;position:relative;}
+.cover-title{font-family:"Playfair Display",serif;font-size:clamp(40px,8vw,76px);font-weight:900;color:#fff;text-align:center;line-height:1.0;position:relative;margin-bottom:12px;}
+.cover-title span{color:var(--gold);}
+.cover-sub{font-size:15px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:16px;position:relative;max-width:520px;line-height:1.6;}
+.cover-desc{font-size:13px;color:rgba(255,255,255,.3);text-align:center;max-width:460px;line-height:1.8;margin-bottom:52px;position:relative;}
+.cover-stats{display:flex;gap:36px;margin-bottom:56px;position:relative;}
+.stat{text-align:center;}
+.stat .n{font-family:"Playfair Display",serif;font-size:30px;color:var(--gold);font-weight:700;line-height:1;}
+.stat .l{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;}
+.divv{width:1px;height:36px;background:rgba(201,151,58,.2);align-self:center;}
+.intake{background:rgba(255,255,255,.04);border:1px solid rgba(201,151,58,.2);padding:36px;width:100%;max-width:440px;margin-bottom:32px;position:relative;}
+.intake h3{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.fg label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:500;}
+.fg input{background:rgba(255,255,255,.06);border:1px solid rgba(201,151,58,.22);color:#fff;padding:13px 14px;font-family:"DM Sans",sans-serif;font-size:14px;outline:none;transition:border-color .2s;width:100%;}
+.fg input:focus{border-color:var(--gold);}
+.fg input::placeholder{color:rgba(255,255,255,.25);}
+.btn-go{background:var(--gold);color:var(--navy);border:none;padding:17px 48px;font-family:"DM Sans",sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:background .2s,transform .15s;position:relative;}
+.btn-go:hover{background:var(--gold-light);transform:translateY(-2px);}
+.cover-note{font-size:11px;color:rgba(255,255,255,.2);text-align:center;max-width:360px;line-height:1.7;position:relative;margin-top:20px;}
+
+/* HEADER */
+#assessment{display:none;min-height:100vh;}
+.hdr{background:var(--navy);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(201,151,58,.12);}
+.hdr-logo{font-family:"Playfair Display",serif;font-size:15px;color:#fff;font-weight:700;letter-spacing:.3px;}
+.hdr-logo span{color:var(--gold);}
+.prog-wrap{flex:1;max-width:300px;margin:0 36px;}
+.prog-lbl{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;}
+.prog-bar{height:2px;background:rgba(255,255,255,.08);}
+.prog-fill{height:100%;background:var(--gold);transition:width .5s ease;width:0%;}
+.hdr-trait{font-size:11px;color:var(--gold);font-family:"DM Mono",monospace;letter-spacing:1.5px;text-transform:uppercase;}
+.abody{max-width:760px;margin:0 auto;padding:52px 24px 100px;}
+
+/* SECTION HEADER */
+.sec-hdr{margin-bottom:44px;padding-bottom:28px;border-bottom:1px solid rgba(201,151,58,.12);}
+.sec-num{font-family:"DM Mono",monospace;font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px;}
+.sec-title{font-family:"Playfair Display",serif;font-size:30px;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.2;}
+.sec-desc{font-size:14px;color:var(--slate);line-height:1.7;}
+.sec-note{background:rgba(15,30,56,.05);border-left:3px solid var(--gold);padding:14px 18px;font-size:13px;color:var(--slate);line-height:1.7;margin-bottom:36px;font-style:italic;}
+
+/* QUESTION CARDS */
+.qcard{background:#fff;border:1px solid rgba(15,30,56,.07);padding:28px 32px;margin-bottom:18px;box-shadow:0 2px 16px rgba(15,30,56,.04);animation:up .25s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.qnum{font-family:"DM Mono",monospace;font-size:10px;color:rgba(15,30,56,.3);letter-spacing:1px;margin-bottom:8px;}
+.tbadge{display:inline-block;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;font-weight:700;margin-bottom:12px;border-radius:2px;}
+.tA{background:rgba(46,125,50,.1);color:var(--A);}
+.tB{background:rgba(21,101,192,.1);color:var(--B);}
+.tC{background:rgba(123,31,162,.1);color:var(--C);}
+.tD{background:rgba(191,54,12,.1);color:var(--D);}
+.qtext{font-size:15px;font-weight:500;color:var(--navy);line-height:1.55;margin-bottom:22px;}
+.scale-lbls{display:flex;justify-content:space-between;font-size:9px;color:rgba(15,30,56,.35);letter-spacing:.5px;text-transform:uppercase;margin-bottom:9px;}
+.scale-opts{display:flex;gap:7px;}
+.sbtn{flex:1;height:46px;border:1.5px solid rgba(15,30,56,.1);background:transparent;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:600;color:rgba(15,30,56,.35);transition:all .12s;border-radius:2px;}
+.sbtn:hover{border-color:var(--gold);color:var(--navy);background:var(--gold-pale);}
+.sbtn.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.err{font-size:12px;color:#c0392b;margin-top:8px;display:none;}
+
+/* ADJECTIVE GRID */
+.adj-wrap{margin-top:8px;}
+.adj-note{font-size:12px;color:var(--slate);margin-bottom:14px;font-style:italic;line-height:1.6;}
+.adj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+.abtn{padding:11px 14px;border:1.5px solid rgba(15,30,56,.1);background:transparent;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;color:var(--slate);text-align:left;transition:all .12s;border-radius:2px;}
+.abtn:hover{border-color:var(--gold);color:var(--navy);background:var(--gold-pale);}
+.abtn.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.adj-cnt{font-size:11px;color:var(--gold);font-family:"DM Mono",monospace;margin-top:10px;}
+
+.nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:44px;}
+.btn-back{background:transparent;border:1px solid rgba(15,30,56,.12);color:var(--slate);padding:13px 24px;font-family:"DM Sans",sans-serif;font-size:14px;cursor:pointer;transition:all .2s;border-radius:2px;}
+.btn-back:hover{border-color:var(--navy);color:var(--navy);}
+.btn-next{background:var(--navy);border:none;color:#fff;padding:15px 40px;font-family:"DM Sans",sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;border-radius:2px;}
+.btn-next:hover{background:var(--navy-light);}
+
+/* RESULTS */
+#results{display:none;}
+.r-hero{background:var(--navy);padding:64px 24px 88px;position:relative;overflow:hidden;}
+.r-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 92% 50%,rgba(201,151,58,.1) 0%,transparent 58%);}
+.r-inner{max-width:980px;margin:0 auto;position:relative;}
+.r-ey{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+.r-name{font-family:"Playfair Display",serif;font-size:clamp(34px,6vw,58px);font-weight:900;color:#fff;margin-bottom:4px;line-height:1.05;}
+.r-type{font-family:"Playfair Display",serif;font-size:clamp(20px,3.5vw,32px);color:var(--gold);font-style:italic;margin-bottom:20px;}
+.r-tag{font-size:15px;color:rgba(255,255,255,.55);max-width:600px;line-height:1.75;}
+.r-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;}
+.chip{padding:9px 18px;border:1px solid rgba(201,151,58,.28);font-size:12px;color:rgba(255,255,255,.7);letter-spacing:.5px;font-family:"DM Mono",monospace;}
+.chip strong{color:var(--gold);}
+
+.rbody{max-width:980px;margin:0 auto;padding:52px 24px 80px;}
+.rh{font-family:"Playfair Display",serif;font-size:23px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.rs{font-size:13px;color:var(--slate);margin-bottom:32px;line-height:1.6;}
+
+/* BELL CURVES */
+.curve-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px;margin-bottom:52px;}
+.ccard{background:#fff;border:1px solid rgba(15,30,56,.07);padding:22px;box-shadow:0 2px 10px rgba(15,30,56,.04);}
+.ccard-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.cltr{font-family:"Playfair Display",serif;font-size:26px;font-weight:900;}
+.cname{font-size:12px;font-weight:600;color:var(--navy);}
+.cscore{font-size:11px;color:var(--slate);margin-bottom:14px;font-family:"DM Mono",monospace;}
+.ccanvas{height:80px;}
+.cpos{font-size:12px;font-weight:700;text-align:center;margin-top:8px;}
+.cdesc{font-size:11px;color:var(--slate);line-height:1.5;margin-top:6px;border-top:1px solid rgba(15,30,56,.06);padding-top:8px;}
+
+/* RADAR */
+.radar-wrap-outer{background:#fff;border:1px solid rgba(15,30,56,.07);padding:32px;margin-bottom:52px;box-shadow:0 2px 10px rgba(15,30,56,.04);}
+.radar-legend{display:flex;gap:24px;margin-bottom:16px;font-size:12px;color:var(--slate);}
+.radar-legend span{display:flex;align-items:center;gap:7px;}
+.rdot{width:10px;height:4px;border-radius:2px;}
+.radar-canvas-wrap{height:340px;max-width:440px;margin:0 auto;position:relative;}
+
+/* TYPE HERO */
+.type-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:40px;margin-bottom:52px;position:relative;overflow:hidden;}
+.type-hero::after{content:"";position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(201,151,58,.07);}
+.th-ey{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;position:relative;}
+.th-name{font-family:"Playfair Display",serif;font-size:28px;color:#fff;margin-bottom:10px;position:relative;}
+.th-desc{font-size:14px;color:rgba(255,255,255,.65);line-height:1.8;max-width:640px;position:relative;}
+.th-code{font-family:"DM Mono",monospace;font-size:11px;color:rgba(255,255,255,.3);margin-top:16px;position:relative;letter-spacing:2px;}
+
+/* TRAIT BLOCKS */
+.tblock{background:#fff;border:1px solid rgba(15,30,56,.07);padding:32px;margin-bottom:16px;box-shadow:0 2px 10px rgba(15,30,56,.04);}
+.tblock-hdr{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;}
+.tblock-ltr{font-family:"Playfair Display",serif;font-size:36px;font-weight:900;width:46px;text-align:center;line-height:1;margin-top:2px;}
+.tblock-meta .tblock-name{font-family:"Playfair Display",serif;font-size:19px;font-weight:700;color:var(--navy);}
+.tblock-meta .tblock-pos{font-size:12px;font-family:"DM Mono",monospace;margin-top:4px;letter-spacing:.5px;}
+.tblock-meta .tblock-def{font-size:13px;color:var(--slate);line-height:1.6;margin-top:6px;}
+.spectrum{display:flex;align-items:center;gap:14px;margin:20px 0;}
+.sp-lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--slate);width:88px;flex-shrink:0;line-height:1.4;}
+.sp-lbl.right{text-align:right;}
+.sp-track{flex:1;height:10px;background:rgba(15,30,56,.06);position:relative;overflow:visible;border-radius:5px;}
+.sp-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.25,.8,.25,1);}
+.sp-dot{width:20px;height:20px;border-radius:50%;border:3px solid #fff;position:absolute;top:50%;transform:translateY(-50%);transition:left 1.2s cubic-bezier(.25,.8,.25,1);box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.trait-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:20px;}
+.tcol h5{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-family:"DM Mono",monospace;padding-bottom:6px;border-bottom:1px solid rgba(201,151,58,.2);}
+.tcol ul{list-style:none;padding:0;}
+.tcol ul li{font-size:12px;color:var(--text);line-height:1.8;padding:1px 0 1px 12px;position:relative;}
+.tcol ul li::before{content:"";position:absolute;left:0;top:9px;width:4px;height:4px;border-radius:50%;background:var(--gold);}
+
+/* TENSION SECTION */
+.tension-section{margin-bottom:52px;}
+.tension-card{background:#fff;border:1px solid rgba(15,30,56,.07);padding:28px;margin-bottom:14px;box-shadow:0 2px 10px rgba(15,30,56,.04);border-left:4px solid var(--gold);}
+.tension-title{font-family:"Playfair Display",serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.tension-code{font-family:"DM Mono",monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:10px;}
+.tension-body{font-size:13px;color:var(--text);line-height:1.8;}
+.tension-body strong{color:var(--navy);}
+
+/* GAP SECTION */
+.gap-card{background:#fff;border:1px solid rgba(15,30,56,.07);padding:24px;margin-bottom:12px;box-shadow:0 2px 8px rgba(15,30,56,.04);}
+.gap-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+.gap-ltr{font-family:"Playfair Display",serif;font-size:22px;font-weight:700;width:28px;flex-shrink:0;}
+.gap-name{font-size:13px;font-weight:600;color:var(--navy);flex:1;}
+.gap-tags{display:flex;gap:8px;flex-wrap:wrap;}
+.gtag{font-size:10px;padding:3px 10px;border-radius:2px;font-weight:600;letter-spacing:.3px;}
+.gtag.pub{background:rgba(201,151,58,.12);color:#8a6400;}
+.gtag.priv{background:rgba(15,30,56,.08);color:var(--navy);}
+.gtag.big{background:rgba(191,54,12,.1);color:#bf360c;}
+.gap-text{font-size:13px;color:var(--slate);line-height:1.7;}
+
+/* COACHING */
+.coach-box{background:var(--navy);padding:44px;margin-bottom:52px;position:relative;overflow:hidden;}
+.coach-box::before{content:"";position:absolute;top:-50px;right:-50px;width:220px;height:220px;border-radius:50%;background:rgba(201,151,58,.06);}
+.coach-ey{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px;position:relative;}
+.coach-box h3{font-family:"Playfair Display",serif;font-size:22px;color:#fff;margin-bottom:24px;position:relative;}
+.coach-list{list-style:none;display:flex;flex-direction:column;gap:14px;position:relative;}
+.coach-list li{display:flex;gap:14px;font-size:14px;color:rgba(255,255,255,.7);line-height:1.75;}
+.coach-list li::before{content:"\25B8";color:var(--gold);flex-shrink:0;margin-top:2px;}
+
+/* ACTIONS */
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:60px;}
+.btn-print{background:var(--gold);border:none;color:var(--navy);padding:14px 30px;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:700;cursor:pointer;border-radius:2px;}
+.btn-retake{background:transparent;border:1.5px solid rgba(15,30,56,.15);color:var(--navy);padding:14px 30px;font-family:"DM Sans",sans-serif;font-size:14px;cursor:pointer;border-radius:2px;}
+
+@media print{#cover,.actions{display:none;}#results{display:block!important;}}
+@media(max-width:640px){.hdr{padding:14px 16px;flex-wrap:wrap;gap:10px;}.prog-wrap{order:3;max-width:100%;flex-basis:100%;margin:0;}.trait-cols,.tcol{grid-template-columns:1fr;}.curve-grid{grid-template-columns:1fr 1fr;}.coach-box{padding:28px;}}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div id="cover">
+  <div class="eyebrow">Human Profile &middot; ABCD Framework</div>
+  <h1 class="cover-title">Who Are<br><span>You, Really?</span></h1>
+  <p class="cover-sub">A behavioral profile rooted in the Culture Index method &mdash; measuring how you&rsquo;re wired as a human being, not just as a professional.</p>
+  <p class="cover-desc">No right or wrong answers. The fastest, most instinctive response is always the most accurate one. Overthinking lowers precision.</p>
+  <div class="cover-stats">
+    <div class="stat"><div class="n">48</div><div class="l">Questions</div></div>
+    <div class="divv"></div>
+    <div class="stat"><div class="n">~12</div><div class="l">Minutes</div></div>
+    <div class="divv"></div>
+    <div class="stat"><div class="n">4</div><div class="l">Core Traits</div></div>
+    <div class="divv"></div>
+    <div class="stat"><div class="n">2&times;</div><div class="l">Perspectives</div></div>
+  </div>
+  <div class="intake">
+    <h3>Before we begin</h3>
+    <div class="fg">
+      <label>Your Full Name</label>
+      <input type="text" id="iName" placeholder="Your full name" />
+    </div>
+    <div class="fg">
+      <label>Email Address <span style="color:rgba(255,255,255,.2);font-size:10px">(optional &mdash; to receive your results)</span></label>
+      <input type="email" id="iEmail" placeholder="your@email.com" />
+    </div>
+  </div>
+  <button class="btn-go" onclick="start()">Begin Assessment &rarr;</button>
+  <p class="cover-note">Your results are private. No scores are shared without your consent. This assessment is for personal awareness and growth.</p>
+</div>
+
+<!-- ASSESSMENT -->
+<div id="assessment">
+  <div class="hdr">
+    <div class="hdr-logo">Human <span>Profile</span></div>
+    <div class="prog-wrap">
+      <div class="prog-lbl"><span id="pText">1 of 8</span><span id="pPct">0%</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+    </div>
+    <div class="hdr-trait" id="hTrait">Autonomy</div>
+  </div>
+  <div class="abody" id="abody"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="r-hero">
+    <div class="r-inner">
+      <div class="r-ey">Human Profile &middot; ABCD Behavioral Assessment</div>
+      <div class="r-name" id="rName"></div>
+      <div class="r-type" id="rType"></div>
+      <div class="r-tag" id="rTag"></div>
+      <div class="r-chips" id="rChips"></div>
+    </div>
+  </div>
+  <div class="rbody">
+    <div class="rh">Your ABCD Profile</div>
+    <p class="rs">Where you fall on the bell curve for each dimension. The center line = the average person. Left = lower expression, Right = higher. Neither side is better &mdash; each has specific assets, liabilities, and motivators that are equally valid.</p>
+    <div class="curve-grid" id="curveGrid"></div>
+
+    <div class="radar-wrap-outer">
+      <div class="rh" style="margin-bottom:6px">Natural vs. Adapted Profile</div>
+      <p class="rs" style="margin-bottom:16px">How you present publicly (gold/dashed) vs. how you actually operate privately (navy/solid). Gaps reveal where you&rsquo;re masking your natural wiring &mdash; which costs real energy over time.</p>
+      <div class="radar-legend">
+        <span><span class="rdot" style="background:var(--gold)"></span>Public (how others see you)</span>
+        <span><span class="rdot" style="background:var(--navy)"></span>Private (how you actually are)</span>
+      </div>
+      <div class="radar-canvas-wrap"><canvas id="radarChart" role="img" aria-label="Radar comparing public and private ABCD profiles">ABCD radar chart.</canvas></div>
+    </div>
+
+    <div class="type-hero" id="typeHero"></div>
+
+    <div class="rh">Trait Deep Dive</div>
+    <p class="rs">Exactly what your position on each dimension means &mdash; with the specific assets, liabilities, and motivators that come with it.</p>
+    <div id="traitSection" style="margin-bottom:52px"></div>
+
+    <div class="tension-section">
+      <div class="rh">Trait Tensions &amp; Combinations</div>
+      <p class="rs">The most meaningful data in a behavioral profile isn&rsquo;t any single trait &mdash; it&rsquo;s how your traits interact. These are the specific tensions and amplifications created by your unique combination.</p>
+      <div id="tensionCards"></div>
+    </div>
+
+    <div style="margin-bottom:52px">
+      <div class="rh">Public vs. Private Self</div>
+      <p class="rs">The two-perspective method reveals where you perform a version of yourself that differs from your internal wiring. Large gaps (20+ points) are the most important data in this profile.</p>
+      <div id="gapCards"></div>
+    </div>
+
+    <div class="coach-box">
+      <div class="coach-ey">Personal Development Guide</div>
+      <h3 id="coachTitle">How to Work With Your Wiring</h3>
+      <ul class="coach-list" id="coachList"></ul>
+    </div>
+
+    <div class="actions">
+      <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+      <button class="btn-retake" onclick="retake()">&larr; Retake</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// SECTIONS — 8 sections, mirroring Culture Index
+// Two passes: PUBLIC (how others see you)
+//             PRIVATE (how you actually are)
+// Short, gut-reaction questions — less overthinkable
+// ══════════════════════════════════════════════════
+const SECS = [
+  { id:"Ap", title:"How Others See You &mdash; Drive", trait:"A", pass:"pub",
+    desc:"Answer as if a coworker or manager is describing you. Not how you feel inside &mdash; how you appear.",
+    note:"Think of your last performance review, or what a colleague would say about you unprompted.",
+    qs:[
+      {id:"ap1",t:"A",q:"Others would say I take charge when direction is unclear rather than waiting for someone else to step up."},
+      {id:"ap2",t:"A",q:"People see me as confident and willing to push back on decisions I disagree with."},
+      {id:"ap3",t:"A",q:"My colleagues would describe me as driven more by personal achievement than team harmony."},
+      {id:"ap4",t:"A",q:"Others see me as someone who wants full ownership of outcomes, not shared accountability."},
+      {id:"ap5",t:"A",q:"People around me would say I rarely need permission or validation before acting."},
+      {id:"ap6",t:"A",q:"Those who know me see me as someone who bets on themselves even when it's risky."},
+    ]},
+  { id:"Bp", title:"How Others See You &mdash; Social Energy", trait:"B", pass:"pub",
+    desc:"Answer based on how others describe your presence in social and group settings.",
+    note:"Not whether you can socialize, but whether others see you as someone who is energized by people.",
+    qs:[
+      {id:"bp1",t:"B",q:"Others would call me outgoing &mdash; I'm easy to talk to in new situations."},
+      {id:"bp2",t:"B",q:"People say I energize a room rather than observe from the edge of it."},
+      {id:"bp3",t:"B",q:"My colleagues would say I prefer talking over texting or emailing."},
+      {id:"bp4",t:"B",q:"Others notice that I remember personal details about people &mdash; birthdays, kids' names, what matters to them."},
+      {id:"bp5",t:"B",q:"People see my warmth and social energy as one of my defining characteristics."},
+      {id:"bp6",t:"B",q:"Those who know me say I'm typically the one who initiates &mdash; conversation, plans, connection."},
+    ]},
+  { id:"Cp", title:"How Others See You &mdash; Pace", trait:"C", pass:"pub",
+    desc:"Answer based on how others would describe your speed, urgency, and response to change.",
+    note:"High = fast-moving, urgent, loves variety. Low = steady, methodical, calm. Both are strengths.",
+    qs:[
+      {id:"cp1",t:"C",q:"Others would describe me as fast-moving and quick to act on new information."},
+      {id:"cp2",t:"C",q:"People see me as someone who rises under pressure and tight deadlines."},
+      {id:"cp3",t:"C",q:"My colleagues say I get restless when work becomes too repetitive or slow."},
+      {id:"cp4",t:"C",q:"Others see me as someone who gets excited by change rather than unsettled by it."},
+      {id:"cp5",t:"C",q:"People notice that I move fast &mdash; I talk fast, decide fast, and act fast."},
+      {id:"cp6",t:"C",q:"Those who know me see me as someone who performs their best when the stakes are highest."},
+    ]},
+  { id:"Dp", title:"How Others See You &mdash; Precision", trait:"D", pass:"pub",
+    desc:"Answer based on how others would describe your relationship with rules, accuracy, and process.",
+    note:"High = detail-oriented, rule-following, thorough. Low = conceptual, flexible, rule-bending.",
+    qs:[
+      {id:"dp1",t:"D",q:"Others would describe me as careful and thorough &mdash; I don't leave loose ends."},
+      {id:"dp2",t:"D",q:"People see me as someone who follows through on commitments without being chased."},
+      {id:"dp3",t:"D",q:"My colleagues would say I learn from history and precedent before making a move."},
+      {id:"dp4",t:"D",q:"Others perceive me as detail-oriented &mdash; I notice the things others miss."},
+      {id:"dp5",t:"D",q:"People around me see me as someone who respects established rules and procedures."},
+      {id:"dp6",t:"D",q:"Those who know me see me as someone who prefers accuracy over speed."},
+    ]},
+  { id:"Av", title:"How You Actually Are &mdash; Drive", trait:"A", pass:"priv",
+    desc:"Now answer for how YOU privately experience yourself &mdash; not how you perform it for others.",
+    note:"Drop every professional mask. Answer for the version of you that exists when no one is watching.",
+    qs:[
+      {id:"av1",t:"A",q:"Internally, I know I do my best work when I have complete ownership &mdash; no co-pilots."},
+      {id:"av2",t:"A",q:"Deep down, I am more comfortable making a hard call alone than building consensus around it."},
+      {id:"av3",t:"A",q:"Privately, winning matters to me personally &mdash; not just collectively."},
+      {id:"av4",t:"A",q:"Honestly, I find it genuinely hard to follow someone else's direction when I believe I'm right."},
+      {id:"av5",t:"A",q:"In reality, I do my best thinking and working when no one is managing me."},
+      {id:"av6",t:"A",q:"My truest self is self-sufficient &mdash; I don't need others' approval to move."},
+    ]},
+  { id:"Bv", title:"How You Actually Are &mdash; Social Energy", trait:"B", pass:"priv",
+    desc:"Answer for how YOU actually experience social interaction &mdash; not how you perform it.",
+    note:"Many people perform high social energy professionally but are privately drained by it. This gap is the most important data in the whole assessment.",
+    qs:[
+      {id:"bv1",t:"B",q:"Honestly, being around people energizes me &mdash; I leave gatherings feeling more alive, not more tired."},
+      {id:"bv2",t:"B",q:"In reality, I think through ideas best by talking them out with someone, not alone."},
+      {id:"bv3",t:"B",q:"Privately, I care more about being liked and recognized than I usually let on."},
+      {id:"bv4",t:"B",q:"Deep down, connection and belonging are among my core motivators."},
+      {id:"bv5",t:"B",q:"Honestly, I feel most fully myself when I'm seen and celebrated by people whose opinion I respect."},
+      {id:"bv6",t:"B",q:"In reality, I am more tuned into people's emotions and unspoken needs than most would guess."},
+    ]},
+  { id:"Cv", title:"How You Actually Are &mdash; Pace", trait:"C", pass:"priv",
+    desc:"Answer for your internal speed setting &mdash; not what your environment demands, but what you naturally crave.",
+    note:"If your job moves fast but you secretly wish it were slower, score low. If you wish everything moved faster, score high.",
+    qs:[
+      {id:"cv1",t:"C",q:"Honestly, I feel most alive when things are moving fast and constantly changing."},
+      {id:"cv2",t:"C",q:"In reality, routine and repetition make me feel dull and under-utilized."},
+      {id:"cv3",t:"C",q:"Privately, I do my best work against a real deadline &mdash; I struggle without one."},
+      {id:"cv4",t:"C",q:"Deep down, I prefer moving fast and correcting later over slowing down to get it perfect."},
+      {id:"cv5",t:"C",q:"Honestly, I get bored faster than most people around me &mdash; even when I don't show it."},
+      {id:"cv6",t:"C",q:"In reality, pressure and high stakes bring out a version of me that nothing else does."},
+    ]},
+  { id:"Dv", title:"How You Actually Are &mdash; Precision", trait:"D", pass:"priv",
+    desc:"Answer for your internal relationship with rules, standards, and correctness.",
+    note:"This is your private compass. Not what your job requires &mdash; what you actually value.",
+    qs:[
+      {id:"dv1",t:"D",q:"Internally, getting it right is personal to me &mdash; accuracy and correctness matter at a deep level."},
+      {id:"dv2",t:"D",q:"Honestly, I feel most secure when expectations and rules are clearly defined."},
+      {id:"dv3",t:"D",q:"Deep down, breaking a commitment I made to someone causes me genuine distress."},
+      {id:"dv4",t:"D",q:"Privately, I hold myself to a higher standard than most people around me would know."},
+      {id:"dv5",t:"D",q:"In reality, I think about precedent and consequences before acting &mdash; I learn from history."},
+      {id:"dv6",t:"D",q:"Honestly, part of my identity is being reliable &mdash; being seen as sloppy would genuinely bother me."},
+    ]},
+];
+
+// ══════════════════════════════════════════════════
+// ADJECTIVE BANKS — mirrors Culture Index two-list method
+// Words are pre-mapped to traits with directional weights
+// ══════════════════════════════════════════════════
+const ADJ_PUB = {
+  words:["Confident","Analytical","Urgent","Warm","Reliable","Bold","Systematic","Energetic","Decisive","Calm","Persuasive","Methodical","Risk-taker","Empathetic","Fast-paced","Detail-oriented","Independent","Sociable","Creative","Precise","Competitive","Collaborative","Impatient","Process-driven","Assertive","Optimistic","Strategic","Thorough","Direct","Steady"],
+  map:{"Confident":"A","Bold":"A","Decisive":"A","Risk-taker":"A","Independent":"A","Assertive":"A","Competitive":"A","Direct":"A","Strategic":"A","Warm":"B","Energetic":"B","Persuasive":"B","Empathetic":"B","Sociable":"B","Collaborative":"B","Optimistic":"B","Urgent":"C","Fast-paced":"C","Creative":"C","Impatient":"C","Analytical":"D","Systematic":"D","Reliable":"D","Methodical":"D","Calm":"D","Detail-oriented":"D","Precise":"D","Process-driven":"D","Thorough":"D","Steady":"D"}
+};
+const ADJ_PRIV = {
+  words:["Driven","Introverted","Spontaneous","Focused","Self-sufficient","People-person","Change-lover","Perfectionist","Ambitious","Listener","Variety-seeker","Rule-follower","Lone wolf","Connector","Deadline-driven","Diligent","Fearless","Empathizer","Restless","Organized","Results-oriented","Reserved","Urgency-driven","Careful","Visionary","Patient","Achiever","Networker","Flexible","Structured"],
+  map:{"Driven":"A","Self-sufficient":"A","Ambitious":"A","Lone wolf":"A","Fearless":"A","Results-oriented":"A","Achiever":"A","Visionary":"A","People-person":"B","Listener":"B","Networker":"B","Empathizer":"B","Connector":"B","Spontaneous":"C","Change-lover":"C","Variety-seeker":"C","Deadline-driven":"C","Restless":"C","Urgency-driven":"C","Flexible":"C","Introverted":"D","Focused":"D","Perfectionist":"D","Rule-follower":"D","Diligent":"D","Organized":"D","Careful":"D","Patient":"D","Structured":"D","Reserved":"D"}
+};
+// Note: Introverted/Reserved/Patient are inverse-B markers — handled in scoring
+
+// ══════════════════════════════════════════════════
+// TRAIT DEFINITIONS — straight from Culture Index
+// ══════════════════════════════════════════════════
+const TD = {
+  A:{name:"Autonomy",color:"#2e7d32",lo:"Team Player",hi:"Independent Driver",
+    desc:"The capacity to make decisions and act on them independently. High A people are self-sufficient, growth-oriented, and driven by personal achievement. Low A people are collaborative, loyal, humble, and thrive when given clear direction and a team to rely on.",
+    low:{assets:["Good at following directions","Team player","Task oriented","Thinking in the present","Humble — We not Me","Loyal and cohesive","Easy to manage","Collaborative by nature"],
+         liabs:["Risk averse","Low innovation tendency","Resist change","Can be indecisive alone"],
+         motivs:["Clear direction from leadership","Harmony in the environment","Manager who covers for mistakes","Removal of conflict and ambiguity"]},
+    high:{assets:["Self-confident","Not afraid of risk or failure","Growth oriented","Loves to win","Wants full ownership","Not afraid of conflict","Macro thinker","Driven by personal goals"],
+          liabs:["Win at all costs mentality","Can be bossy or a bully","Too independent — resists collaboration","My way or the highway"],
+          motivs:["Bet on themselves","Freedom and autonomy","Uncapped bonuses and incentives","Results — not activity metrics"]}},
+  B:{name:"Social-Ability",color:"#1565c0",lo:"Analytical Introvert",hi:"Social Connector",
+    desc:"How you relate to other people, groups, and social interaction. High B people are naturally extroverted, empathetic, and energized by connection. Low B people are analytical, introverted, and prefer to communicate through systems and writing rather than conversation.",
+    low:{assets:["Analytical and precise","Critical thinker","Loves systems and processes","Thinks deeply before speaking","Works well independently","Introverted depth"],
+         liabs:["Can resist change","May steal joy unintentionally","Can seem abrupt or cold","Resists small talk"],
+         motivs:["Private praise — not public recognition","Protection from overly social environments","Complex problems to solve alone","Written communication over calls"]},
+    high:{assets:["Naturally fun and energizing","Boosts morale","Optimistic and positive","Can read body language intuitively","Empathetic and engaging","Infectious energy"],
+          liabs:["Can be loud or distracting","Trusts too easily","Can be seen as fluffy or surface-level","Struggles with depth alone"],
+          motivs:["Public recognition and praise","Titles and visible status","Phone calls over emails","Money, trips, experiences"]}},
+  C:{name:"Pace",color:"#7b1fa2",lo:"Steady and Methodical",hi:"Fast and Urgent",
+    desc:"The speed at which you naturally operate and your comfort with change and variety. High C people are fast-moving, urgent, and thrive on new challenges. Low C people are calm, methodical, and possess extraordinary focus — their steadiness is a superpower in chaotic environments.",
+    low:{assets:["Calm under sustained pressure","Low stress","Outstanding listener","Steady and reliable","Thrives on repetition and mastery","Productive over long periods","Focus is their superpower","Deliberate and methodical"],
+         liabs:["Can appear too slow","Struggles in fast-paced chaotic settings","Low urgency can frustrate others","Resists change"],
+         motivs:["Clear priorities","Consistent workflows","Deadlines they can plan around","Inbox/outbox clarity and order"]},
+    high:{assets:["Thrives under pressure and deadlines","Fast reaction time","Acts with urgency","Talks fast, thinks fast, moves fast","Loves change and variety","Handles interruptions well","Fourth-quarter performer"],
+          liabs:["Impatient with slow people or processes","Gets bored quickly","Can appear disloyal — moves on fast","Loses focus on long-term projects"],
+          motivs:["Deadlines and sub-deadlines","New challenges frequently","Fast rewards close to the action","Variety — no two days the same"]}},
+  D:{name:"Conformity",color:"#bf360c",lo:"Conceptual Free Thinker",hi:"Precision and Structure",
+    desc:"Your relationship with rules, standards, precision, and established process. High D people are diligent rule-followers who prevent mistakes and drive quality. Low D people are conceptual, fearless, outside-the-box thinkers who treat rules as suggestions and ask What If constantly.",
+    low:{assets:["Thick skin — forgiving","Conceptual and abstract thinker","Fearless — big risk taker","Outside-the-box thinking","Non-compliant (asks why)","Ask What If constantly","Changes mind fast when new data arrives"],
+         liabs:["Rules are suggestions — inconsistent","Can appear uncaring about quality","Sloppy on details","Inconsistent follow-through"],
+         motivs:["Freedom — no micromanagement","Latitude to invent the method","Build their own parameters","Results-only accountability"]},
+    high:{assets:["Love rules and structure","Respectful of process","Drive quality and profit","Prevent mistakes before they happen","Attention to details","Follow through completely","Think historically — learn from precedent","Diligent and dutiful"],
+          liabs:["Too literal — misses nuance","Perfectionist paralysis","Nit-picky to a fault","Workaholic — hard to turn off"],
+          motivs:["Safety and security","Time and space for learning","Clear definition of good enough","Get out of their way once trained"]}}
+};
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let S = {name:"",email:"",currentSec:0,ans:{},adjPub:[],adjPriv:[]};
+const TOTAL = SECS.length + 2;
+
+function start(){
+  const n=document.getElementById("iName").value.trim();
+  if(!n){alert("Please enter your name to begin.");return;}
+  S.name=n; S.email=document.getElementById("iEmail").value.trim();
+  document.getElementById("cover").style.display="none";
+  document.getElementById("assessment").style.display="block";
+  renderSec(0); window.scrollTo(0,0);
+}
+
+function renderSec(idx){
+  S.currentSec=idx;
+  const pct=Math.round(idx/TOTAL*100);
+  document.getElementById("pText").textContent="Section "+(idx+1)+" of "+TOTAL;
+  document.getElementById("pPct").textContent=pct+"%";
+  document.getElementById("pFill").style.width=pct+"%";
+  if(idx===SECS.length){renderAdj(false);return;}
+  if(idx===SECS.length+1){renderAdj(true);return;}
+  const sec=SECS[idx];
+  document.getElementById("hTrait").textContent=TD[sec.trait].name;
+  const done=SECS.slice(0,idx).reduce((a,s)=>a+s.qs.length,0);
+  const bc={A:"tA",B:"tB",C:"tC",D:"tD"};
+  const pass=sec.pass==="pub"?"Public Self":"Private Self";
+  let h=`<div class="sec-hdr">
+    <div class="sec-num">Section ${idx+1} of ${TOTAL} &middot; ${pass}</div>
+    <div class="sec-title">${sec.title}</div>
+    <div class="sec-desc">${sec.desc}</div>
+  </div><div class="sec-note">${sec.note}</div>`;
+  sec.qs.forEach((q,i)=>{
+    const g=done+i+1; const sv=S.ans[q.id];
+    h+=`<div class="qcard" style="animation-delay:${i*.04}s">
+      <div class="qnum">Q${g}</div>
+      <span class="tbadge ${bc[q.t]}">Trait ${q.t} &middot; ${TD[q.t].name}</span>
+      <div class="qtext">${q.q}</div>
+      <div class="scale-lbls"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+      <div class="scale-opts">${[1,2,3,4,5].map(v=>`<button class="sbtn${sv==v?" on":""}" onclick="pick('${q.id}',${v},this)">${v}</button>`).join("")}</div>
+      <div class="err" id="e_${q.id}">Please answer this question.</div>
+    </div>`;
+  });
+  h+=`<div class="nav-row">${idx>0?`<button class="btn-back" onclick="back()">&larr; Back</button>`:"<div></div>"}<button class="btn-next" onclick="next()">${idx<TOTAL-1?"Next Section &rarr;":"See My Profile &rarr;"}</button></div>`;
+  document.getElementById("abody").innerHTML=h; window.scrollTo(0,0);
+}
+
+function renderAdj(isPriv){
+  const idx=isPriv?SECS.length+1:SECS.length;
+  const pct=Math.round(idx/TOTAL*100);
+  document.getElementById("pText").textContent="Section "+(idx+1)+" of "+TOTAL;
+  document.getElementById("pPct").textContent=pct+"%";
+  document.getElementById("pFill").style.width=pct+"%";
+  document.getElementById("hTrait").textContent=isPriv?"Private Words":"Public Words";
+  const bank=isPriv?ADJ_PRIV:ADJ_PUB;
+  const key=isPriv?"adjPriv":"adjPub";
+  const saved=S[key];
+  const title=isPriv?"Choose words that describe who you actually are":"Choose words that describe how others see you";
+  const desc=isPriv?"Go with your gut. Your first instinct is always the most accurate. Choose 6 to 10.":"Think about how a colleague or manager would describe you unprompted. Choose 6 to 10.";
+  const note=isPriv?"This is the most private list. No performances here &mdash; just honest self-recognition.":"Not who you aspire to be. Who you currently are in other people&rsquo;s eyes.";
+  let h=`<div class="sec-hdr">
+    <div class="sec-num">Section ${idx+1} of ${TOTAL} &middot; ${isPriv?"Private Self":"Public Self"}</div>
+    <div class="sec-title">${title}</div>
+    <div class="sec-desc">${desc}</div>
+  </div><div class="sec-note">${note}</div>
+  <div class="qcard">
+    <div class="qtext">Select 6&ndash;10 words:</div>
+    <div class="adj-wrap">
+      <div class="adj-note">Click to select. Click again to deselect. First instinct wins.</div>
+      <div class="adj-grid" id="ag">${bank.words.map(w=>`<button class="abtn${saved.includes(w)?" on":""}" onclick="tog('${key}','${w}',this)">${w}</button>`).join("")}</div>
+      <div class="adj-cnt" id="ac">${saved.length} selected${saved.length<6?" &mdash; need at least 6":""}</div>
+      <div class="err" id="e_adj">Please select at least 6 words before continuing.</div>
+    </div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="back()">&larr; Back</button><button class="btn-next" onclick="next()">${isPriv?"See My Profile &rarr;":"Next Section &rarr;"}</button></div>`;
+  document.getElementById("abody").innerHTML=h; window.scrollTo(0,0);
+}
+
+function pick(id,v,btn){
+  S.ans[id]=v;
+  btn.closest(".scale-opts").querySelectorAll(".sbtn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  const e=document.getElementById("e_"+id);if(e)e.style.display="none";
+}
+
+function tog(key,w,btn){
+  const a=S[key];
+  if(a.includes(w)){a.splice(a.indexOf(w),1);btn.classList.remove("on");}
+  else{if(a.length>=10)return;a.push(w);btn.classList.add("on");}
+  const c=document.getElementById("ac");
+  if(c)c.innerHTML=a.length+" selected"+(a.length<6?" &mdash; need at least 6":"");
+  if(a.length>=6){const e=document.getElementById("e_adj");if(e)e.style.display="none";}
+}
+
+function back(){renderSec(S.currentSec-1);}
+
+function next(){
+  const idx=S.currentSec;
+  if(idx===SECS.length||idx===SECS.length+1){
+    const key=idx===SECS.length?"adjPub":"adjPriv";
+    if(S[key].length<6){document.getElementById("e_adj").style.display="block";return;}
+  } else {
+    let ok=true;
+    SECS[idx].qs.forEach(q=>{if(!S.ans[q.id]){document.getElementById("e_"+q.id).style.display="block";ok=false;}});
+    if(!ok){document.querySelector(".err[style*=block]")?.scrollIntoView({behavior:"smooth",block:"center"});return;}
+  }
+  idx<TOTAL-1?renderSec(idx+1):showResults();
+}
+
+// ══════════════════════════════════════════════════
+// SCORING ENGINE
+// Culture Index method adapted:
+// 1. Average raw Likert scores per trait per pass
+// 2. Add adjective weight bonuses
+// 3. Apply inverse-B correction for introverted markers
+// 4. Normalize to 0-100 bell curve scale
+// 5. Compute public/private gap
+// ══════════════════════════════════════════════════
+const B_INV = ["Introverted","Reserved","Patient"]; // these lower B score in private pass
+
+function score(){
+  const raw={A:{p:[],v:[]},B:{p:[],v:[]},C:{p:[],v:[]},D:{p:[],v:[]}};
+  SECS.forEach(sec=>{
+    const pass=sec.pass==="pub"?"p":"v";
+    sec.qs.forEach(q=>raw[q.t][pass].push(S.ans[q.id]||3));
+  });
+  function adjW(words,bank,t,isPriv){
+    let w=0;
+    words.forEach(wd=>{
+      if(bank.map[wd]===t) w+=0.45;
+      if(isPriv&&t==="B"&&B_INV.includes(wd)) w-=0.35;
+    });
+    return w;
+  }
+  function avg(a){return a.length?a.reduce((x,y)=>x+y)/a.length:3;}
+  function norm(v,adj){return Math.round(Math.min(100,Math.max(0,((Math.min(5,Math.max(1,v+adj)))-1)/4*100)));}
+  const out={};
+  ["A","B","C","D"].forEach(t=>{
+    const pa=avg(raw[t].p), va=avg(raw[t].v);
+    const pw=adjW(S.adjPub,ADJ_PUB,t,false), vw=adjW(S.adjPriv,ADJ_PRIV,t,true);
+    out[t]={pub:norm(pa,pw), priv:norm(va,vw)};
+    out[t].gap=Math.abs(out[t].pub-out[t].priv);
+  });
+  return out;
+}
+
+function cls(n){
+  if(n<25)return{lbl:"Far Left",sh:"Very Low",pct:n};
+  if(n<40)return{lbl:"Left of Line",sh:"Below Average",pct:n};
+  if(n<60)return{lbl:"Center",sh:"Average",pct:n};
+  if(n<75)return{lbl:"Right of Line",sh:"Above Average",pct:n};
+  return{lbl:"Far Right",sh:"High",pct:n};
+}
+
+// ══════════════════════════════════════════════════
+// PROFILE TYPES — 16 combinations with deep descriptions
+// ══════════════════════════════════════════════════
+function getType(s){
+  const A=s.A.priv>=50,B=s.B.priv>=50,C=s.C.priv>=50,D=s.D.priv>=50;
+  const code=(A?"H":"L")+(B?"H":"L")+(C?"H":"L")+(D?"H":"L");
+  const types={
+    "HHHL":{name:"The Strategist",desc:"You combine rare ingredients: the will to lead independently (High A), the magnetic pull to bring people with you (High B), the urgency to move before others do (High C), and enough structure to know when the rules serve you. You are a natural authority in rooms that need both direction and energy. The version of you that most people see — bold, fast, warm, decisive — is largely authentic. Your shadow side: you can outpace the people you need, and your tolerance for imprecision may leave damage behind you that you never see."},
+    "HHLH":{name:"The Architect",desc:"You build things that outlast you. High A means you need full ownership to operate at your best. Low B means your most precise work happens in solitude. High C gives you urgency that your introverted surface hides. High D means you hold yourself to a standard that most people around you don't understand. You are the person others call when the design has to be right and the timeline can't slip. Your shadow: you can appear cold when you're actually focused, and your standards can make collaboration feel punishing to others."},
+    "HHLL":{name:"The Visionary",desc:"You are wired to generate momentum, not maintain it. High A and High B together make you a compelling, bold presence that others follow. Low C means you think in long arcs, not sprints. Low D means you treat constraints as starting points, not walls. Your best role is pointing at the horizon and making others believe in it. Your shadow: you need detail people to catch what you leave behind, and you may struggle to understand why others can't just figure it out."},
+    "HHHH":{name:"The Closer",desc:"All four traits are in the upper range — which is both a gift and a pressure system. You drive hard (High A), connect fast (High B), move urgently (High C), and hold yourself to a precise standard (High D). In peak state, you are extraordinary to watch. In stress, these traits conflict: urgency versus precision, independence versus connection. The question for you is not whether you can perform — it's whether you can sustain. High D and High C in the same person create an internal tension between going fast and doing it right."},
+    "HLHH":{name:"The Executor",desc:"You are driven, fast, and precise — and you do your best work without an audience. High A means full ownership. Low B means you are not energized by people; you are energized by outcomes. High C means you operate with urgency. High D means you won't sacrifice quality to get there. You are the person who runs the hardest project and delivers on time, alone. Your shadow: your independence and low social need can make you appear unapproachable, and your pace can leave people feeling unconsulted."},
+    "HLHL":{name:"The Analyst",desc:"You are at your best in the deep end — alone with a hard problem, full ownership, no urgency, and a mandate to get it exactly right. High A means no co-pilots. Low B means no audience needed. Low C means you think in depth, not speed. High D means correctness is a core value, not just a preference. Others bring you in when precision matters more than speed. Your shadow: in a world that rewards urgency and visibility, your depth can go unnoticed. You may need an ambassador who can translate your work into language others will act on."},
+    "LLHH":{name:"The Specialist",desc:"You work best with others, you think carefully, you move fast when the system is clear, and you hold yourself to a high standard. Low A means you don't need to own the whole thing — you just need to own your piece completely. Low B means you work well within a team without the need to dominate it socially. High C means you perform under pressure. High D means you do your part right. You are the person a strong organization quietly depends on."},
+    "LLLH":{name:"The Guardian",desc:"You are the stability others build around. Low A means you work best with clear direction. Low B means you communicate through systems more than charm. Low C means you are methodical, calm, and extraordinary at tasks that require sustained focus. High D means you do everything correctly. You prevent the mistakes that cost organizations years. Your shadow: in environments that reward urgency and visibility, your contributions may be overlooked precisely because they're reliable — problems that never happen don't get celebrated."},
+    "LLLL":{name:"The Collaborator",desc:"You are humble, reliable, analytical, and flexible. You don't need to own the outcome, don't need an audience, don't need to move fast, and don't need rigid rules. You make every team more functional. Your shadow: without structure from the outside, you may drift. You need a leader who gives clear priorities and creates an environment where your loyalty and consistency are valued. When that's present, you are indispensable."},
+    "LHHL":{name:"The Ambassador",desc:"You are the person who makes a room feel like somewhere people want to be, acts with urgency when it counts, and remains flexible in how things get done. Low A means you lead through influence, not authority. High B means you connect instantly. High C means you don't overthink. Low D means you adapt the rules to the situation. You are exceptional in customer-facing, community-building, and relationship-intensive roles. Your shadow: without precision from others around you, things can fall through the cracks."},
+    "LHHH":{name:"The Connector",desc:"You are socially driven, fast, and precise — a rare and powerful combination. Low A means you don't need to be the boss; you need to be in the room. High B means people are your medium. High C means you operate with urgency. High D means you follow through. You build networks that function like organizations. Your shadow: you can spread yourself across too many relationships and commitments, and your desire for precision can create internal tension with your social spontaneity."},
+    "HLLL":{name:"The Pioneer",desc:"You are wired to go first, alone, in unmapped territory. High A means full ownership or nothing. Low B means you don't need others' energy to fuel yours. Low C means you think in epochs, not quarters. Low D means rules are suggestions and constraints are starting points. You build things no one else could see. Your shadow: you can leave people behind and structures incomplete. You need partners who can build the systems behind the vision you create."},
+    "LHLL":{name:"The Diplomat",desc:"You are the social and emotional infrastructure of every group you join. Low A means you lead from beside, not above. High B means people are drawn to you and you to them. Low C means you think before you act and you value steadiness. Low D means you are flexible and forgiving. You resolve conflict others can't resolve, hold relationships others would abandon, and make people feel seen. Your shadow: you may prioritize harmony over necessary confrontation, and your aversion to urgency can frustrate fast-moving environments."},
+    "HHHL":{name:"The Driver",desc:"High A, High B, High C, and Low D — you move fast, you move with people, you move boldly, and you don't let rules slow you down. You are the archetype of momentum. In the right environment, you are transformational. The Low D is your most important shadow: the mistakes that happen in your wake, the commitments that get dropped in the rush, the details that matter to others even when they don't matter to you."},
+    "LHLH":{name:"The Craftsman",desc:"Low A, High B, Low C, High D — you work best within a team, connecting through relationships (High B), doing things correctly (High D), at a pace that allows for mastery (Low C), without the need to own everything (Low A). You are a master of your craft in collaborative settings. Your shadow: you may need others to push for the visibility your work deserves."},
+  };
+  return {...(types[code]||{name:"The Individualist",desc:"Your combination is genuinely rare — it doesn't map cleanly to common archetypes. This is not a limitation; it means your wiring is genuinely unique. Study your individual trait scores closely — they are the most accurate portrait of you this assessment can offer."}), code};
+}
+
+// ══════════════════════════════════════════════════
+// TENSION ANALYSIS — the most differentiated section
+// Specific behavioral predictions from trait combinations
+// ══════════════════════════════════════════════════
+function getTensions(s){
+  const A=s.A.priv, B=s.B.priv, C=s.C.priv, D=s.D.priv;
+  const tensions=[];
+
+  if(A>=65&&B<45){
+    tensions.push({code:"High A + Low B",title:"You Lead Through Results, Not Relationships",body:`You drive hard and you do it largely alone. High A means you don't need others' buy-in to move. Low B means you're not naturally wired to read the room or manage the emotional temperature of a group. <strong>The specific risk:</strong> people follow your results but they don't feel connected to you, which means the moment your results dip, loyalty goes with them. The growth edge here is learning to create deliberate moments of connection — not because you need them, but because the people around you do.`});
+  }
+  if(A>=65&&B>=65){
+    tensions.push({code:"High A + High B",title:"You Are Magnetic and Autonomous Simultaneously",body:`This is a rare and powerful combination. You don't need people to function — but you thrive when they're around. You can lead a room (High B) and then make a hard call alone without consensus (High A). <strong>The specific risk:</strong> your social warmth can make people feel closer to you than you actually feel to them, creating asymmetric expectations. People may feel betrayed when you make a unilateral call after a collaborative-feeling conversation.`});
+  }
+  if(C>=65&&D>=65){
+    tensions.push({code:"High C + High D",title:"You Fight Yourself — Speed vs. Precision",body:`High C wants to move now. High D wants to get it right. These two traits are in constant internal negotiation. In peak state, this tension produces exceptional work — fast and accurate. In stress, it produces paralysis or frantic perfecting. <strong>The specific pattern to watch:</strong> you may restart something multiple times, each time quickly, each time trying to get it right — burning time without realizing it. Naming this pattern is the first step to interrupting it.`});
+  }
+  if(C>=65&&D<40){
+    tensions.push({code:"High C + Low D",title:"You Move Fast and Leave a Trail",body:`You are wired for urgency and you are not wired for precision. This is the entrepreneur profile, the fourth-quarter performer, the person who creates breakthrough and chaos in equal measure. <strong>The specific pattern:</strong> you will outperform almost everyone in speed and boldness, and you will require someone behind you who closes the loops, catches the errors, and manages the commitments you made in motion. This isn't a flaw — it's an operating model that needs a counterpart.`});
+  }
+  if(A<40&&D>=65){
+    tensions.push({code:"Low A + High D",title:"You Execute Brilliantly Within Structure",body:`Low A means you don't need ownership — you need clarity. High D means you hold yourself to a high standard once you understand the rules. Together, this makes you exceptional within well-designed systems. <strong>The specific risk:</strong> if the system is broken or the direction is unclear, your performance can fall dramatically. You are not wired to create the structure from scratch — you are wired to operate it at a high level.`});
+  }
+  if(B>=65&&C<40){
+    tensions.push({code:"High B + Low C",title:"You Build Deep Relationships at a Slow Burn",body:`High B means people are drawn to you and you to them. Low C means you don't rush. Together, this creates relationships with unusual depth and durability. You don't make fast friends — you make lasting ones. <strong>The specific risk:</strong> in fast-moving environments, your deliberate pace in relationship-building can be mistaken for disinterest. You may need to signal warmth more quickly than feels natural to prevent people from misreading your steadiness as distance.`});
+  }
+  if(A>=60&&C>=60&&D<45){
+    tensions.push({code:"High A + High C + Low D",title:"You Are Built for Disruption, Not Maintenance",body:`Three traits in the same direction: independent, urgent, and unbound by rules. You create new things at speed and without asking permission. You are least effective in roles that require maintaining systems others built. <strong>The specific pattern:</strong> you will feel caged in bureaucratic or slow-moving environments, and you will find ways — consciously or not — to introduce change even when stability is what's needed. Knowing this is the first step to choosing environments that are genuinely suited to how you're wired.`});
+  }
+
+  // Gap-based tension
+  const maxGap=Math.max(s.A.gap,s.B.gap,s.C.gap,s.D.gap);
+  const gapTrait=["A","B","C","D"].find(t=>s[t].gap===maxGap);
+  if(maxGap>22&&gapTrait){
+    tensions.push({code:`${TD[gapTrait].name} Gap (${maxGap} pts)`,title:`You Are Performing a Version of ${TD[gapTrait].name} That Isn't Natural`,body:`Your public score on ${TD[gapTrait].name} is ${s[gapTrait].pub}. Your private score is ${s[gapTrait].priv}. That ${maxGap}-point gap is significant. It means you are presenting a version of yourself on this dimension that costs real energy to sustain. <strong>What this looks like in practice:</strong> over time, environments that require you to maintain this performance — especially under pressure or during low-energy periods — will feel draining in ways that are hard to explain to others. The growth edge is finding or creating contexts where the gap narrows — where who you are privately is who you're allowed to be publicly.`});
+  }
+
+  if(tensions.length===0){
+    tensions.push({code:"Balanced Profile",title:"Your Traits Are Well-Integrated",body:"Your four scores don't produce major internal tensions — which means you likely experience less chronic internal conflict than many people. Your development work is more about amplifying your natural strengths and ensuring you're in environments that match your wiring, rather than resolving competing drives."});
+  }
+  return tensions;
+}
+
+// ══════════════════════════════════════════════════
+// SHOW RESULTS
+// ══════════════════════════════════════════════════
+function showResults(){
+  document.getElementById("assessment").style.display="none";
+  document.getElementById("results").style.display="block";
+  window.scrollTo(0,0);
+  const s=score();
+  const pt=getType(s);
+  const tensions=getTensions(s);
+  const first=S.name.split(" ")[0];
+
+  document.getElementById("rName").textContent=S.name;
+  document.getElementById("rType").textContent=pt.name;
+  document.getElementById("rTag").textContent=pt.desc.substring(0,160)+"...";
+  document.getElementById("rChips").innerHTML=
+    ["A","B","C","D"].map(t=>`<div class="chip">${TD[t].name}: <strong>${cls(s[t].priv).sh}</strong> &middot; ${s[t].priv}/100</div>`).join("");
+
+  buildCurves(s);
+  buildRadar(s);
+
+  document.getElementById("typeHero").innerHTML=`
+    <div class="th-ey">Profile Type &middot; ABCD Code: ${pt.code}</div>
+    <div class="th-name">${pt.name}</div>
+    <div class="th-desc">${pt.desc}</div>
+    <div class="th-code">${["A","B","C","D"].map(t=>`${t}=${s[t].priv}`).join(" &middot; ")}</div>`;
+
+  buildTraits(s);
+  buildTensions(tensions);
+  buildGaps(s);
+  buildCoaching(s,first);
+  saveResult(s,pt);
+}
+
+function buildCurves(s){
+  document.getElementById("curveGrid").innerHTML=["A","B","C","D"].map(t=>{
+    const td=TD[t]; const v=s[t].priv; const p=cls(v);
+    return `<div class="ccard">
+      <div class="ccard-top"><div class="cltr" style="color:${td.color}">${t}</div><div class="cname">${td.name}</div></div>
+      <div class="cscore">${v}/100 &middot; ${p.lbl}</div>
+      <div class="ccanvas"><canvas id="cv_${t}" width="200" height="80" role="img" aria-label="${td.name} score ${v}">Score: ${v}</canvas></div>
+      <div class="cpos" style="color:${td.color}">${p.sh}</div>
+      <div class="cdesc">${v>=50?td.hi+" tendency":td.lo+" tendency"}</div>
+    </div>`;
+  }).join("");
+  setTimeout(()=>["A","B","C","D"].forEach(t=>drawCurve("cv_"+t,s[t].priv,TD[t].color)),120);
+}
+
+function drawCurve(id,sc,col){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext("2d"),W=c.width,H=c.height,mu=W/2,sd=W/6;
+  ctx.clearRect(0,0,W,H);
+  // Curve
+  ctx.beginPath();ctx.strokeStyle="rgba(15,30,56,0.12)";ctx.lineWidth=1.5;
+  for(let x=0;x<=W;x++){const z=(x-mu)/sd,y=H*.82-(H*.65)*Math.exp(-.5*z*z);x?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+  // Fill to score
+  const sx=sc/100*W;
+  ctx.beginPath();ctx.fillStyle=col+"28";ctx.moveTo(0,H*.82);
+  for(let x=0;x<=sx;x++){const z=(x-mu)/sd,y=H*.82-(H*.65)*Math.exp(-.5*z*z);ctx.lineTo(x,y);}
+  ctx.lineTo(sx,H*.82);ctx.closePath();ctx.fill();
+  // Dot
+  const z2=(sx-mu)/sd,dy=H*.82-(H*.65)*Math.exp(-.5*z2*z2);
+  ctx.beginPath();ctx.arc(sx,dy,5,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+  ctx.beginPath();ctx.arc(sx,dy,5,0,Math.PI*2);ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();
+  // Center line
+  ctx.beginPath();ctx.strokeStyle="rgba(15,30,56,0.15)";ctx.setLineDash([3,3]);ctx.lineWidth=1;
+  ctx.moveTo(W/2,4);ctx.lineTo(W/2,H*.85);ctx.stroke();ctx.setLineDash([]);
+}
+
+function buildRadar(s){
+  new Chart(document.getElementById("radarChart"),{
+    type:"radar",
+    data:{labels:["A: Autonomy","B: Social-Ability","C: Pace","D: Conformity"],
+      datasets:[
+        {label:"Public",data:[s.A.pub,s.B.pub,s.C.pub,s.D.pub],borderColor:"#c9973a",backgroundColor:"rgba(201,151,58,.12)",borderWidth:2,pointBackgroundColor:"#c9973a",borderDash:[6,4],pointRadius:4},
+        {label:"Private",data:[s.A.priv,s.B.priv,s.C.priv,s.D.priv],borderColor:"#0f1e38",backgroundColor:"rgba(15,30,56,.08)",borderWidth:2.5,pointBackgroundColor:"#0f1e38",pointRadius:4}
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:9},color:"#6b7a94"},grid:{color:"rgba(15,30,56,0.07)"},pointLabels:{font:{size:11,weight:"500"},color:"#1a1a2e"}}},
+      plugins:{legend:{display:false}}}
+  });
+}
+
+function buildTraits(s){
+  document.getElementById("traitSection").innerHTML=["A","B","C","D"].map(t=>{
+    const td=TD[t]; const v=s[t].priv; const isH=v>=50; const d=isH?td.high:td.low; const p=cls(v);
+    return `<div class="tblock">
+      <div class="tblock-hdr">
+        <div class="tblock-ltr" style="color:${td.color}">${t}</div>
+        <div class="tblock-meta">
+          <div class="tblock-name">${td.name}</div>
+          <div class="tblock-pos" style="color:${td.color}">${p.lbl} &middot; ${v}/100 &middot; ${isH?td.hi:td.lo}</div>
+          <div class="tblock-def">${td.desc}</div>
+        </div>
+      </div>
+      <div class="spectrum">
+        <div class="sp-lbl">${td.lo}</div>
+        <div class="sp-track">
+          <div class="sp-fill" style="width:${v}%;background:${td.color}35"></div>
+          <div class="sp-dot" style="left:calc(${v}% - 10px);background:${td.color}"></div>
+        </div>
+        <div class="sp-lbl right">${td.hi}</div>
+      </div>
+      <div class="trait-cols">
+        <div class="tcol"><h5>Assets</h5><ul>${d.assets.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+        <div class="tcol"><h5>Liabilities</h5><ul>${d.liabs.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+        <div class="tcol"><h5>Motivators</h5><ul>${d.motivs.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function buildTensions(tensions){
+  document.getElementById("tensionCards").innerHTML=tensions.map(t=>`
+    <div class="tension-card">
+      <div class="tension-code">${t.code}</div>
+      <div class="tension-title">${t.title}</div>
+      <div class="tension-body">${t.body}</div>
+    </div>`).join("");
+}
+
+function buildGaps(s){
+  const descs={
+    A:"An Autonomy gap means you present a different level of independence and self-direction than you actually experience. High public / low private = you perform confidence and assertiveness but privately prefer collaboration and direction. Low public / high private = you suppress your natural drive for ownership in environments that don't reward it.",
+    B:"A Social-Ability gap is the most common in this assessment. Many people perform high social energy professionally but are privately introverted and drained by it. The larger this gap, the more energy you spend maintaining a social persona that isn't natural. This is one of the leading predictors of burnout.",
+    C:"A Pace gap means you're operating at a speed that doesn't match your internal setting. High public / low private = you're performing urgency and speed but privately crave depth and steadiness — a recipe for exhaustion. Low public / high private = you're in an environment that moves slower than you need, which creates suppressed restlessness.",
+    D:"A Conformity gap reveals the distance between how precise and rule-following you appear versus how you actually operate internally. High public / low private = you perform diligence and rule-following but privately are a conceptual free thinker. Low public / high private = you hold yourself to high private standards that others don't see or reward."
+  };
+  document.getElementById("gapCards").innerHTML=["A","B","C","D"].map(t=>{
+    const v=s[t]; const td=TD[t];
+    return `<div class="gap-card">
+      <div class="gap-row">
+        <div class="gap-ltr" style="color:${td.color}">${t}</div>
+        <div class="gap-name">${td.name}</div>
+        <div class="gap-tags">
+          <span class="gtag pub">Public: ${cls(v.pub).sh} (${v.pub})</span>
+          <span class="gtag priv">Private: ${cls(v.priv).sh} (${v.priv})</span>
+          ${v.gap>20?`<span class="gtag big">Gap: ${v.gap} pts &#9888;</span>`:`<span style="font-size:11px;color:var(--slate);padding:3px 8px;font-family:DM Mono,monospace">Gap: ${v.gap}</span>`}
+        </div>
+      </div>
+      <div class="gap-text">${descs[t]}</div>
+    </div>`;
+  }).join("");
+}
+
+function buildCoaching(s,first){
+  const tips=[];
+  const A=s.A.priv,B=s.B.priv,C=s.C.priv,D=s.D.priv;
+  if(A>=65)tips.push(`${first}, your growth edge is not more drive — you have that. It's learning to bring people with you without slowing down. Practice narrating your thinking before you act, not after. People follow vision they helped shape.`);
+  else tips.push(`${first}, your strength is loyalty, collaboration, and execution within a system. Your growth edge is building tolerance for ambiguity — practicing making a call with 70% of the information, then correcting. Waiting for certainty costs you opportunities.`);
+  if(B>=65)tips.push(`You are energized by people, and your warmth is a genuine asset. The discipline to develop: learning when to move from building rapport to making a decision or having a hard conversation. High B people often avoid the friction that produces growth.`);
+  else tips.push(`You do your best thinking alone and communicate best through systems. The discipline to develop: creating deliberate moments of visibility and connection — not because you need them, but because influence requires presence. Your insights deserve an audience.`);
+  if(C>=65)tips.push(`You thrive in urgency and variety. The discipline to develop is depth — the willingness to stay with one thing longer than feels comfortable. Your instinct to move to the next thing can rob you of the compound returns that come from sustained attention.`);
+  else tips.push(`Your focus and steadiness are gifts in a world that mistakes urgency for progress. The discipline to develop: creating your own urgency when the environment doesn't provide it. Deadlines you set yourself are as real as ones others impose.`);
+  if(D>=65)tips.push(`You hold yourself and your work to a high standard. The discipline to develop: distinguishing between quality that matters and quality that is a form of avoidance. Ask yourself — is finishing this correctly more important than finishing it now? Sometimes the answer is yes. Not always.`);
+  else tips.push(`You are a conceptual, flexible thinker who resists unnecessary constraint. The discipline to develop: creating voluntary structure — not because someone requires it, but because your best ideas deserve a system that brings them to completion.`);
+  const maxGap=Math.max(s.A.gap,s.B.gap,s.C.gap,s.D.gap);
+  if(maxGap>22){
+    const gt=["A","B","C","D"].find(t=>s[t].gap===maxGap);
+    tips.push(`Your largest gap is on ${TD[gt].name} (${maxGap} points). This is worth sitting with. The question to ask: what would it cost you to close this gap — to let your private wiring show up more fully in your public life? And what would it make possible?`);
+  }
+  document.getElementById("coachTitle").textContent="How to Work With Your Wiring, "+first;
+  document.getElementById("coachList").innerHTML=tips.map(t=>`<li>${t}</li>`).join("");
+}
+
+async function saveResult(s,pt){
+  try{
+    await fetch("/.netlify/functions/save-result",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name:S.name,email:S.email,scores:s,profileType:{name:pt.name,code:pt.code},framework:"ABCD-Human",timestamp:new Date().toISOString()})});
+  }catch(e){console.warn("Save failed:",e);}
+}
+
+function retake(){
+  S={name:"",email:"",currentSec:0,ans:{},adjPub:[],adjPriv:[]};
+  document.getElementById("results").style.display="none";
+  document.getElementById("cover").style.display="flex";
+  document.getElementById("iName").value="";
+  document.getElementById("iEmail").value="";
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
